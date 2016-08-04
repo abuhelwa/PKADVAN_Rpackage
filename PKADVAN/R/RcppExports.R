@@ -13,6 +13,14 @@ ThreeCompOralCpp <- function(inputFrame) {
     .Call('PKADVAN_ThreeCompOralCpp', PACKAGE = 'PKADVAN', inputFrame)
 }
 
+OneCompFirstOrderAbsOneCompMetabCpp <- function(inputFrame) {
+    .Call('PKADVAN_OneCompFirstOrderAbsOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
+}
+
+TwoCompFirstOrderAbsOneCompMetabCpp <- function(inputFrame) {
+    .Call('PKADVAN_TwoCompFirstOrderAbsOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
+}
+
 ThreeCompFirstOrderAbsOneCompMetabCpp <- function(inputFrame) {
     .Call('PKADVAN_ThreeCompFirstOrderAbsOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
 }
