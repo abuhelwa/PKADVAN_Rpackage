@@ -57,5 +57,7 @@ University of South Australia\cr
 \code{\link{OneCompIVbolusOneCompMetab}}, \code{\link{ThreeCompIVbolusOneCompMetab}}
 
 \code{\link{OneCompIVinfusionOneCompMetab}}, \code{\link{TwoCompIVinfusionOneCompMetab}}, \code{\link{ThreeCompIVinfusionOneCompMetab}}
+
+\code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{TwoCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
 }
 

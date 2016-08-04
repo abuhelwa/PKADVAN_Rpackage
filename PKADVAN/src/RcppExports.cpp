@@ -38,6 +38,28 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// OneCompFirstOrderAbsOneCompMetabCpp
+DataFrame OneCompFirstOrderAbsOneCompMetabCpp(DataFrame inputFrame);
+RcppExport SEXP PKADVAN_OneCompFirstOrderAbsOneCompMetabCpp(SEXP inputFrameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
+    __result = Rcpp::wrap(OneCompFirstOrderAbsOneCompMetabCpp(inputFrame));
+    return __result;
+END_RCPP
+}
+// TwoCompFirstOrderAbsOneCompMetabCpp
+DataFrame TwoCompFirstOrderAbsOneCompMetabCpp(DataFrame inputFrame);
+RcppExport SEXP PKADVAN_TwoCompFirstOrderAbsOneCompMetabCpp(SEXP inputFrameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
+    __result = Rcpp::wrap(TwoCompFirstOrderAbsOneCompMetabCpp(inputFrame));
+    return __result;
+END_RCPP
+}
 // ThreeCompFirstOrderAbsOneCompMetabCpp
 DataFrame ThreeCompFirstOrderAbsOneCompMetabCpp(DataFrame inputFrame);
 RcppExport SEXP PKADVAN_ThreeCompFirstOrderAbsOneCompMetabCpp(SEXP inputFrameSEXP) {
