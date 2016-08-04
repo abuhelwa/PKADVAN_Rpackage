@@ -31,6 +31,53 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 # 2.  Run the "PKADVAN" function for the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
 # 3.  Add residul un-explained variability to the IPREDs.
 
+
+###################################################
+#The "PKADVAN" package contains the following models
+#Basic Pharmacokinetic Models:
+    # 1.  Iv bolus models
+        # a.  1comp IV bolus
+        # b.  2comp IV bolus
+        # c.  3comp IV bolus
+		
+    # 2.  IV infusion models 
+        # a.  1comp IV infusion
+        # b.  2comp IV infusion
+        # c.  3comp IV infusion
+		
+    # 3.  First order absorption models
+        # a.  1comp first-order absorption
+        # b.  2comp first-order absorption
+        # c.  3comp first-order absorption
+
+#Transit Absorption Models:
+    # 1. One compartment first-order absorption transit models:
+        # a.  1comp-1-transit
+        # b.  1comp-2-transit
+        # c.  1comp-3-transit
+        # d.  1comp-4-transit
+    # 2. Two-compartment first order absorption tansit models:
+        # a.  2comp-1-transit
+        # b.  2comp-2-transit
+        # c.  2comp-3-transit
+        # d.  2comp-4-transit
+
+#First-order Formation Metabolite models
+    # 1. IV bolus metabolite models
+        # a.  1comp IV bolus-1comp metabolite
+        # b.  2comp IV bolus-1comp metabolite
+        # c.  3comp IV bolus-1comp metabolite
+
+    # 2. IV infusion metabolite models
+        # a.  1comp IV infusion-1comp metabolite
+        # b.  2comp IV infusion-1comp metabolite
+        # c.  3comp IV infusion-1comp metabolite
+
+    # 3. First-order absorption metabolite models
+        # a.  1comp first-oredr absorption-1comp metabolite
+        # b.  2comp first-oredr absorption-1comp metabolite
+        # c.  3comp first-oredr absorption-1comp metabolite
+
 ######################################################################
 ########      Basic Pharmacokinetic models    ########################
 ######################################################################
@@ -161,20 +208,26 @@ head(simdf)
 #?processing time
 system.time(ddply(dfadvan, .(ID), ThreeCompIVbolus))
 
-#===============================
-# First-order absorption Models
-#===============================
+#============================================
+# First-order absorption Models Basic Models
+#============================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,48,12))
 tlast <- 72
+
+#Now define finer sample times for after a dose to capture Cmax
+doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
+
+#Use the outer product but with addition to expand this doseseq for all dosetimes
+PKtimes <- outer(dosetimes,doseseq,"+")
 
 #set number of subjects
 nsub <- 1000
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
 df$CLCR[df$ID <= 0.5*nsub] <- 70
 
 doserows <- subset(df, TIME%in%dosetimes)
@@ -222,6 +275,7 @@ head(simdf)
 simdf$DV <- simdf$IPRED*(1+PROP)
 head(simdf)
 
+simdf <- subset(simdf, MDV==0)
 
 plotobj <- NULL
 titletext <- expression(atop('Simulated Drug Concentrations',
@@ -236,8 +290,7 @@ plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
 #?processing time. Depends on PK sampling duration
-#system.time(ddply(dfadvan, .(ID), OneCompFirstOrderAbs))
-
+system.time(ddply(dfadvan, .(ID), OneCompFirstOrderAbs))
 
 #----------------------------------------------------------------
 # 2 compartment-first order absorption  via PKADVAN package
@@ -265,7 +318,7 @@ dfadvan$F1 <- F1pop
 simdf <- ddply(dfadvan, .(ID), TwoCompFirstOrderAbs)
 head(simdf)
 
-#system.time(ddply(dfadvan, .(ID), TwoCompFirstOrderAbs))
+system.time(ddply(dfadvan, .(ID), TwoCompFirstOrderAbs))
 
 #---------------------------------------------------------------
 # 3 compartment-first order absorption via PKADVAN package
@@ -297,12 +350,11 @@ dfadvan$F1 <- F1pop
 simdf <- ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs)
 head(simdf)
 
-#system.time(ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs))
+system.time(ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs))
 
-
-#=======================================================================================
-#                                  IV infusion
-#=======================================================================================
+#=============================
+# IV infusion Basic Models
+#=============================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 #number of subjects
@@ -314,7 +366,7 @@ tlast <- 72
 dosetimessim <- c(0,20.5)
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimessim))),"AMT"=0,"RATE"=0,"CLCR"=90)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimessim))),"AMT"=0,MDV=0,"RATE"=0,"CLCR"=90)
 
 df$CLCR[df$ID>=0.5*nsub] <- 70
 
@@ -324,6 +376,7 @@ doserowssim <- subset(df, TIME%in%dosetimessim)
 #Dose & RATE can be arbitrary
 doserowssim$AMT  <- 100
 doserowssim$RATE <- 4
+doserowssim$MDV  <- 1
 
 #Add back dose information
 df <- rbind(df,doserowssim)
@@ -359,6 +412,8 @@ head(simdf)
 #For example; additive error model
 simdf$DV <- simdf$IPRED+PROP
 
+simdf <- subset(simdf, MDV==0)
+
 #DV
 plotobj <- NULL
 titletext <- expression(atop('Simulated Drug Concentrations',
@@ -386,8 +441,7 @@ plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
 #?provcessing time
-#system.time(simdf <- ddply(dfadvan, .(ID), OneCompIVinfusion))
-
+system.time(simdf <- ddply(dfadvan, .(ID), OneCompIVinfusion))
 
 #--------------------------------------------------
 # 2 compartment-IV infusion via PKADVAN package
