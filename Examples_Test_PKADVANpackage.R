@@ -25,11 +25,23 @@ CI90hi <- function(x) quantile(x, probs=0.95,na.rm=T)
 CI95lo <- function(x) quantile(x, probs=0.025,na.rm=T)
 CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 
-#==================================================================================================
-#                                       IV bolus Models
-#==================================================================================================
-#Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
+####################################################
+## Three simple Steps for performing simulations:
+# 1.  Generate a simulation data frame with the individual PK parameters and include any covariate effects on the PK parameters.
+# 2.  Run the "PKADVAN" function of the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
+# 3.  Add residul un explained variability to the IPREDs.
 
+######################################################################
+########      Basic Pharmacokinetic models    ########################
+######################################################################
+# 1.  Iv bolus models (1,2, and 3 compartment models)
+# 2.  IV infusion models (1,2, and 3 compartment models)
+# 3.  First order absorption models(1,2, and 3 compartment models)
+
+#====================
+# IV bolus Models
+#====================
+#Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,72,4))
 tlast <- 96
@@ -147,11 +159,11 @@ simdf <- ddply(dfadvan, .(ID), ThreeCompIVbolus)
 head(simdf)
 
 #?processing time
-#system.time(ddply(dfadvan, .(ID), ThreeCompIVbolus))
+system.time(ddply(dfadvan, .(ID), ThreeCompIVbolus))
 
-#==========================================================================================
-#                               First-order absorption Models
-#==========================================================================================
+#==================================
+# First-order absorption Models
+#==================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,48,12))

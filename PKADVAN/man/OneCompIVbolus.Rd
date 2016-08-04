@@ -18,15 +18,15 @@ in the central compartment and returns the output added to the \code{inputDataFr
 
 where:
 \tabular{ll}{
- \code{ID}: \tab is the subject ID\cr
- \code{TIME}:\tab is the sampling time points\cr
- \code{AMT}:\tab is the dose\cr
- \code{CL}:\tab is the central compartment clearance\cr
- \code{V}:\tab is the central volume of distribution\cr
- }
+   \code{ID}: \tab is the subject ID\cr
+   \code{TIME}:\tab is the sampling time points\cr
+   \code{AMT}:\tab is the dose\cr
+   \code{CL}:\tab is the central compartment clearance\cr
+   \code{V}:\tab is the central volume of distribution\cr
+   }
 }
 \details{
-To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),  the function
+To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),    the function
 has to be applied for each subject \code{ID}. One way of doing that is through using the \code{ddply} functionality
 in the \pkg{plyr} package in R. The \code{ddply} functionality allows applying the \pkg{PKADVAN} function to each subject
 \code{ID} and combines the results into a data frame. Please load \pkg{plyr} package in \code{R} before

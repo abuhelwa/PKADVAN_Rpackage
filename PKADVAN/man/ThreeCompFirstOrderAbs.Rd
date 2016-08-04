@@ -24,14 +24,14 @@ where:
 \code{KA}:\tab is the absorption rate contstant\cr
 \code{CL}:\tab is the central compartment clearance\cr
 \code{V2}:\tab is the central volume of distribution\cr
-\code{Q3}:\tab  is the inter-compartmental clearance (1)\cr
+\code{Q3}:\tab    is the inter-compartmental clearance (1)\cr
 \code{V3}:\tab is the peripheral volume of distribution (1)\cr
 \code{Q4}:\tab is the inter-compartmental clearance (2)\cr
 \code{V4}:\tab is the peripheral volume of distribution (2)\cr
 }
 }
 \details{
-To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),  the function
+To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),    the function
 has to be applied for each subject \code{ID}. One way of doing that is through using the \code{ddply} functionality
 in the \pkg{plyr} package in R. The \code{ddply} functionality allows applying the \pkg{PKADVAN} function to each subject
 \code{ID} and combines the results into a data frame. Please load \pkg{plyr} package in \code{R} before
