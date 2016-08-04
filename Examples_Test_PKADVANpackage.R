@@ -1,4 +1,4 @@
-#Test script for PKADVAN functions
+#Test PK examples script for PKADVAN functions
 rm(list=ls(all=TRUE))
 graphics.off()
 
