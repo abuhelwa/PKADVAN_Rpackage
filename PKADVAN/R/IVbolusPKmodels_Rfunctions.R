@@ -125,13 +125,13 @@ TwoCompIVbolus <- function(inputDataFrame){
     #Returns a dataframe with populated columns for A1, A2, and IPRED
 
     #Setting variables to NULL first to avoid notes "no visible binding for global variable [variable name]" upon checking the package
-    k10 <- k12 <- k21 <- k20 <- NULL
+    k10 <- k12 <- k21 <- NULL
 
     #Calculate micro-rate constants
     inputDataFrame$k10 <- inputDataFrame$CL/inputDataFrame$V1
     inputDataFrame$k12 <- inputDataFrame$Q/inputDataFrame$V1
     inputDataFrame$k21 <- inputDataFrame$Q/inputDataFrame$V2
-    inputDataFrame$k20 <- 0
+    #inputDataFrame$k20 <- 0
 
     #Add columns for amounts for marginals speed gain!
     inputDataFrame$A1 <- 0
@@ -205,16 +205,16 @@ ThreeCompIVbolus <- function(inputDataFrame){
     #Returns a dataframe with populated columns for A1, A2, A3,and IPRED
 
     #Setting variables to NULL first to avoid notes "no visible binding for global variable [variable name]" upon checking the package
-    k10 <- k12 <- k21 <- k20 <- k13 <- k31 <- k30 <- NULL # Setting the variables to NULL first
+    k10 <- k12 <- k21 <- k13 <- k31 <- NULL # Setting the variables to NULL first
 
     #Calculate micro-rate constants
     inputDataFrame$k10 <- inputDataFrame$CL/inputDataFrame$V1
     inputDataFrame$k12 <- inputDataFrame$Q2/inputDataFrame$V1
     inputDataFrame$k21 <- inputDataFrame$Q2/inputDataFrame$V2
-    inputDataFrame$k20 <- 0
+    #inputDataFrame$k20 <- 0
     inputDataFrame$k13 <- inputDataFrame$Q3/inputDataFrame$V1
     inputDataFrame$k31 <- inputDataFrame$Q3/inputDataFrame$V3
-    inputDataFrame$k30 <- 0
+    #inputDataFrame$k30 <- 0
 
     #Adding these into the input data for marginal speed gain
     inputDataFrame$A1 <- 0

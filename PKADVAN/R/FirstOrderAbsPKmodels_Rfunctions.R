@@ -131,13 +131,13 @@ TwoCompFirstOrderAbs <- function(inputDataFrame){
     #Returns a dataframe with populated columns for A1, A2, A3 and IPRED
 
     #Setting variables to NULL first to avoid notes "no visible binding for global variable [variable name]" upon checking the package
-    k20 <- k23 <- k32 <- k30 <- NULL
+    k20 <- k23 <- k32 <- NULL
 
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
     inputDataFrame$k23 <- inputDataFrame$Q/inputDataFrame$V2
     inputDataFrame$k32 <- inputDataFrame$Q/inputDataFrame$V3
-    inputDataFrame$k30 <- 0
+    #inputDataFrame$k30 <- 0
 
     #Add columns for amounts for marginals speed gain!
     inputDataFrame$A1 <- 0
@@ -220,16 +220,16 @@ ThreeCompFirstOrderAbs <- function(inputDataFrame){
     #Returns a dataframe with populated columns for A1, A2, A3 and IPRED
 
     #Setting variables to NULL first to avoid notes "no visible binding for global variable [variable name]" upon checking the package
-    k20 <- k23 <- k32 <- k30 <- k24 <- k42 <- k40 <- NULL
+    k20 <- k23 <- k32 <- k24 <- k42 <- NULL
 
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
     inputDataFrame$k23 <- inputDataFrame$Q3/inputDataFrame$V2
     inputDataFrame$k32 <- inputDataFrame$Q3/inputDataFrame$V3
-    inputDataFrame$k30 <- 0
+    #inputDataFrame$k30 <- 0
     inputDataFrame$k24 <- inputDataFrame$Q4/inputDataFrame$V2
     inputDataFrame$k42 <- inputDataFrame$Q4/inputDataFrame$V4
-    inputDataFrame$k40 <- 0
+    #inputDataFrame$k40 <- 0
 
     #Add columns for amounts for marginals speed gain!
     inputDataFrame$A1 <- 0

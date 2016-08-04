@@ -28,8 +28,8 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 ####################################################
 ## Three simple Steps for performing simulations:
 # 1.  Generate a simulation data frame with the individual PK parameters and include any covariate effects on the PK parameters.
-# 2.  Run the "PKADVAN" function of the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
-# 3.  Add residul un explained variability to the IPREDs.
+# 2.  Run the "PKADVAN" function for the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
+# 3.  Add residul un-explained variability to the IPREDs.
 
 ######################################################################
 ########      Basic Pharmacokinetic models    ########################
@@ -108,7 +108,7 @@ plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
 #Check processing time. Depends on PK sampling duration!
-#system.time(ddply(dfadvan, .(ID), OneCompIVbolus))
+system.time(ddply(dfadvan, .(ID), OneCompIVbolus))
 
 #--------------------------------------------
 # 2 compartment-IV Bolus via PKADVAN package
@@ -131,7 +131,7 @@ dfadvan$V2 <- V2pop
 simdf <- ddply(dfadvan, .(ID), TwoCompIVbolus)
 head(simdf)
 
-#system.time(ddply(dfadvan, .(ID), TwoCompIVbolus))
+system.time(ddply(dfadvan, .(ID), TwoCompIVbolus))
 
 #--------------------------------------------
 # 3 compartment-IV Bolus via PKADVAN package
@@ -161,9 +161,9 @@ head(simdf)
 #?processing time
 system.time(ddply(dfadvan, .(ID), ThreeCompIVbolus))
 
-#==================================
+#===============================
 # First-order absorption Models
-#==================================
+#===============================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,48,12))
