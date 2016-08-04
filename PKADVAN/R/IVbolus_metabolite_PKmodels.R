@@ -37,6 +37,7 @@
 #'
 #' @seealso \code{\link{TwoCompIVbolusOneCompMetab}}, \code{\link{ThreeCompIVbolusOneCompMetab}}
 #' @seealso \code{\link{OneCompIVinfusionOneCompMetab}}, \code{\link{TwoCompIVinfusionOneCompMetab}}, \code{\link{ThreeCompIVinfusionOneCompMetab}}
+#' @seealso \code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{TwoCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
 #' @author Ahmad Abuhelwa\cr
 #' Australian Center for Pharmacometrics\cr
 #' School of Pharmacy and Medical Sciences\cr
@@ -128,6 +129,7 @@ OneCompIVbolusOneCompMetab    <- function(inputDataFrame){
 #'
 #' @seealso \code{\link{OneCompIVbolusOneCompMetab}}, \code{\link{ThreeCompIVbolusOneCompMetab}}
 #' @seealso \code{\link{OneCompIVinfusionOneCompMetab}}, \code{\link{TwoCompIVinfusionOneCompMetab}}, \code{\link{ThreeCompIVinfusionOneCompMetab}}
+#' @seealso \code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{TwoCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
 #' @author Ahmad Abuhelwa\cr
 #' Australian Center for Pharmacometrics\cr
 #' School of Pharmacy and Medical Sciences\cr
@@ -226,6 +228,7 @@ TwoCompIVbolusOneCompMetab <- function(inputDataFrame){
 #'
 #' @seealso \code{\link{OneCompIVbolusOneCompMetab}}, \code{\link{TwoCompIVbolusOneCompMetab}}
 #' @seealso \code{\link{OneCompIVinfusionOneCompMetab}}, \code{\link{TwoCompIVinfusionOneCompMetab}}, \code{\link{ThreeCompIVinfusionOneCompMetab}}
+#' @seealso \code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{TwoCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
 #' @author Ahmad Abuhelwa\cr
 #' Australian Center for Pharmacometrics\cr
 #' School of Pharmacy and Medical Sciences\cr
