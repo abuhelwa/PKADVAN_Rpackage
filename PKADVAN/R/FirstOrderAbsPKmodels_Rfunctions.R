@@ -156,7 +156,7 @@ TwoCompFirstOrderAbs <- function(inputDataFrame){
     inputDataFrame$IPRED <- inputDataFrame$A2/inputDataFrame$V2
 
     #subset extra columns
-    inputDataFrame <- subset(inputDataFrame, select=-c(k20,k23,k32,k30))
+    inputDataFrame <- subset(inputDataFrame, select=-c(k20,k23,k32))
 
     #Return output
     inputDataFrame
@@ -249,7 +249,7 @@ ThreeCompFirstOrderAbs <- function(inputDataFrame){
     inputDataFrame$IPRED <- inputDataFrame$A2/inputDataFrame$V2
 
     #subset extra columns
-    inputDataFrame <- subset(inputDataFrame, select=-c(k20,k23,k32,k30,k24,k42,k40))
+    inputDataFrame <- subset(inputDataFrame, select=-c(k20,k23,k32,k24,k42))
 
     #Return output
     inputDataFrame

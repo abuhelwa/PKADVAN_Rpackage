@@ -147,7 +147,7 @@ TwoCompIVbolus <- function(inputDataFrame){
     inputDataFrame$IPRED <- inputDataFrame$A1/inputDataFrame$V1
 
     #subset extra columns
-    inputDataFrame <- subset(inputDataFrame, select=-c(k10,k12,k21,k20))
+    inputDataFrame <- subset(inputDataFrame, select=-c(k10,k12,k21))
 
     #Return output
     inputDataFrame
@@ -232,7 +232,7 @@ ThreeCompIVbolus <- function(inputDataFrame){
     inputDataFrame$IPRED <- inputDataFrame$A1/inputDataFrame$V1
 
     #subset extra columns
-    inputDataFrame <- subset(inputDataFrame, select=-c(k10,k12,k21,k20,k13,k31,k30))
+    inputDataFrame <- subset(inputDataFrame, select=-c(k10,k12,k21,k13,k31))
 
     #Return output
     inputDataFrame
