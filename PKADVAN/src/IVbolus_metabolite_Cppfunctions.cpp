@@ -4,48 +4,63 @@
 using namespace Rcpp;
 using namespace std;
 
-//-------------------------------------------------------------
-// 1 compartment IV bolus via ADVAN-style equations: Cpp code
-//-------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// IV bolus- 1 compartment parent with 1 compartment first-order metabolite formation: Cpp code
+//----------------------------------------------------------------------------------------------
 
 // [[Rcpp::export]]
 
-DataFrame OneCompIVbolusCpp(DataFrame inputFrame){
+DataFrame OneCompIVbolusOneCompMetabCpp(DataFrame inputFrame){
 
   //  Create vectors of each element used in function and for constructing output dataframe
   Rcpp::DoubleVector TIME = inputFrame["TIME"];
   Rcpp::DoubleVector AMT = inputFrame["AMT"];
   Rcpp::DoubleVector k10 = inputFrame["k10"];
+  Rcpp::DoubleVector kmf = inputFrame["kmf"];
+  Rcpp::DoubleVector kme = inputFrame["kme"];
   Rcpp::DoubleVector A1 = inputFrame["A1"];
+  Rcpp::DoubleVector AM = inputFrame["AM"];
 
-  double currentk10, currentTime, previousA1, currentA1;
+  double currentk10, currentTIME, currentA1,currentAM, currentkmf, currentkme, E1;
+  double previousA1, previousAM;
 
   // in C++ arrays start at index 0, so to start at 2nd row need to set counter to 1
   // for counter from 1 to the number of rows in input data frame
   for(int counter = 1; counter < inputFrame.nrows(); counter++){
     // pull out all the variables that will be used for calculation
     currentk10  = k10[ counter ];
-    currentTime = TIME[ counter ] - TIME[ counter - 1];
+	currentkmf  = kmf[ counter ];
+	currentkme  = kme[ counter ];
+	
+    currentTIME = TIME[ counter ] - TIME[ counter - 1];
     previousA1  = A1[ counter - 1 ];
+	previousAM  = AM[ counter -1 ];
+	
+	//calculate E1- rate constant exiting from compartment 1
+    E1          = currentk10 + currentkmf;
 
-    // Calculate currentA1
-    currentA1 = previousA1*exp(-currentTime*currentk10);
+    // Calculate currentA1: Amount in the central compartment
+    currentA1 = previousA1*exp(-currentTIME*E1);
+	
+	// Calculate currentAM: Amount of the metabolite
+	currentAM = previousAM*exp(-currentTIME*currentkme) +
+	    currentkmf*previousA1*(exp(-currentTIME*currentkme)/(E1-currentkme) + exp(-currentTIME*E1)/(currentkme-E1));
 
     // Fill in Amounts and check for other doses
+	AM[ counter ] = currentAM;
     A1[ counter ] = currentA1 + AMT[ counter ];
-
+	
   } // end for loop
   return(0);
 }
 
 
-//-------------------------------------------------------------
-// 2 compartment IV bolus via ADVAN-style equations: Cpp code
-//-------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+// IV bolus- 2 compartment parent with 1 compartment first-order metabolite formation: Cpp code
+//---------------------------------------------------------------------------------------------
 
-// input Dataframe from R
 // [[Rcpp::export]]
-DataFrame TwoCompIVbolusCpp(DataFrame inputFrame){
+DataFrame TwoCompIVbolusOneCompMetabCpp(DataFrame inputFrame){
 
   //  Create vectors of each element used in function and for constructing output dataframe
   Rcpp::DoubleVector TIME = inputFrame["TIME"];
@@ -53,11 +68,14 @@ DataFrame TwoCompIVbolusCpp(DataFrame inputFrame){
   Rcpp::DoubleVector k10 = inputFrame["k10"];
   Rcpp::DoubleVector k12 = inputFrame["k12"];
   Rcpp::DoubleVector k21 = inputFrame["k21"];
+  Rcpp::DoubleVector kmf = inputFrame["kmf"];
+  Rcpp::DoubleVector kme = inputFrame["kme"];
   Rcpp::DoubleVector A1 = inputFrame["A1"];
   Rcpp::DoubleVector A2 = inputFrame["A2"];
+  Rcpp::DoubleVector AM = inputFrame["AM"];
 
-  double currentTIME, currentk10, currentk12, currentk21, E1, E2, lambda1, lambda2;
-  double previousA1, previousA2, currentA1, currentA2;
+  double currentTIME, currentk10, currentk12, currentk21,currentkmf, currentkme, E1, E2, lambda1, lambda2;
+  double previousA1, previousA2, previousAM, currentA1, currentA2,currentAM;
 
   // in C++ arrays start at index 0, so to start at 2nd row need to set counter to 1
   // for counter from 1 to the number of rows in input data frame
@@ -67,13 +85,17 @@ DataFrame TwoCompIVbolusCpp(DataFrame inputFrame){
     currentk10  = k10[ counter ];
     currentk12  = k12[ counter ];
     currentk21  = k21[ counter ];
+	currentkmf  = kmf[ counter ];
+	currentkme  = kme[ counter ];
+	
     currentTIME = TIME[ counter ] - TIME[ counter - 1];
     previousA1  = A1[ counter - 1 ];
     previousA2  = A2[ counter - 1 ];
+	previousAM  = AM[ counter -1 ];
 
 
     //calculate hybrid rate constants
-    E1          = currentk10 + currentk12;
+    E1          = currentk10 + currentk12 + currentkmf;
     E2          = currentk21 ;
 
     lambda1 = 0.5*((E1+E2)+sqrt(pow((E1+E2),2)-4*(E1*E2-currentk12*currentk21)));
@@ -84,9 +106,20 @@ DataFrame TwoCompIVbolusCpp(DataFrame inputFrame){
 
     //calculate currentA2: Amount in the peripheral compartment
     currentA2 = (((previousA2*E1+previousA1*currentk12)-previousA2*lambda1)*exp(-currentTIME*lambda1)-((previousA2*E1+previousA1*currentk12)-previousA2*lambda2)*exp(-currentTIME*lambda2))/(lambda2-lambda1);
+    
+	// Calculate currentAM: Amount of the metabolite
+	currentAM = previousAM*exp(-currentTIME*currentkme) ;
+	currentAM = currentAM + currentkmf*(previousA2*currentk21*(-exp(-currentTIME*lambda2)/((lambda1-lambda2)*(lambda2-currentkme)) +
+                                                  exp(-currentTIME*lambda1)/((lambda1-lambda2)*(lambda1-currentkme)) -
+                                                  exp(-currentTIME*currentkme)/((lambda1-currentkme)*(currentkme-lambda2))) + 
+                           previousA1*((lambda2-E2)*exp(-currentTIME*lambda2)/((lambda1-lambda2)*(lambda2-currentkme)) +
+                                           (currentkme-E2)*exp(-currentTIME*currentkme)/((lambda1-currentkme)*(currentkme-lambda2)) +
+                                           (E2-lambda1)*exp(-currentTIME*lambda1)/((lambda1-lambda2)*(lambda1-currentkme))) ); 
 
+	    
     // Fill in Amounts and look for other doses
     A2[ counter ] = currentA2;
+    AM[ counter ] = currentAM;
     A1[ counter ] = currentA1 + AMT[ counter ] ;
 
   } // end for loop
@@ -94,13 +127,12 @@ DataFrame TwoCompIVbolusCpp(DataFrame inputFrame){
   return 0;
 }
 
-//-------------------------------------------------------------
-// 3 compartment IV bolus via ADVAN-style equations: Cpp code
-//-------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+// IV bolus- 3 compartment parent with 1 compartment first-order metabolite formation: Cpp code
+//---------------------------------------------------------------------------------------------
 
-// input Dataframe from R
 // [[Rcpp::export]]
-DataFrame ThreeCompIVbolusCpp(DataFrame inputFrame){
+DataFrame ThreeCompIVbolusOneCompMetabCpp(DataFrame inputFrame){
 
   //  Create vectors of each element used in function and for constructing output dataframe
   Rcpp::DoubleVector TIME = inputFrame["TIME"];
@@ -110,11 +142,15 @@ DataFrame ThreeCompIVbolusCpp(DataFrame inputFrame){
   Rcpp::DoubleVector k21 = inputFrame["k21"];
   Rcpp::DoubleVector k13 = inputFrame["k13"];
   Rcpp::DoubleVector k31 = inputFrame["k31"];
+  Rcpp::DoubleVector kmf = inputFrame["kmf"];
+  Rcpp::DoubleVector kme = inputFrame["kme"];  
   Rcpp::DoubleVector A1 = inputFrame["A1"];
   Rcpp::DoubleVector A2 = inputFrame["A2"];
   Rcpp::DoubleVector A3 = inputFrame["A3"];
-
-  double currentTIME, currentk10, currentk12, currentk21, currentk13, currentk31, previousA1, previousA2, previousA3, currentA1, currentA2,currentA3 ;
+  Rcpp::DoubleVector AM = inputFrame["AM"];
+  
+  double currentTIME, currentk10, currentk12, currentk21, currentk13, currentk31,currentkmf, currentkme;
+  double previousA1, previousA2, previousA3,previousAM, currentA1, currentA2,currentA3, currentAM  ;
   double a, b, c, m, n, Q, alpha, beta, gamma, theta, B, C, I, J ;
   double E1, E2, E3, lambda1, lambda2, lambda3;
 
@@ -128,14 +164,17 @@ DataFrame ThreeCompIVbolusCpp(DataFrame inputFrame){
     currentk21  = k21[ counter ];
     currentk13  = k13[ counter ];
     currentk31  = k31[ counter ];
-
+	currentkmf  = kmf[ counter ];
+	currentkme  = kme[ counter ];
+	
     currentTIME = TIME[ counter ] - TIME[ counter - 1];
     previousA1  = A1[ counter - 1 ];
     previousA2  = A2[ counter - 1 ];
     previousA3  = A3[ counter - 1 ];
-
+    previousAM  = AM[ counter -1 ];
+	
     //calculate hybrid rate constants
-    E1          = currentk10 + currentk12 + currentk13;
+    E1          = currentk10 + currentk12 + currentk13 + currentkmf ;
     E2          = currentk21;
     E3          = currentk31;
 
@@ -174,10 +213,22 @@ DataFrame ThreeCompIVbolusCpp(DataFrame inputFrame){
     currentA3 = previousA3*(exp(-currentTIME*lambda1)*(E1-lambda1)*(E2-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E1-lambda2)*(E2-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E1-lambda3)*(E2-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
     currentA3 = currentA3 + exp(-currentTIME*lambda1)*(J-previousA1*currentk13*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(previousA1*currentk13*lambda2-J)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(previousA1*currentk13*lambda3-J)/((lambda1-lambda3)*(lambda3-lambda2)) ;
 
+    // Calculate currentAM: Amount of the metabolite
+    currentAM = previousAM*exp(-currentTIME*currentkme);
+    currentAM = currentAM + currentkmf*(previousA1*((E3*lambda1-E2*E3-pow(lambda1,2.0)+E2*lambda1)*exp(-currentTIME*lambda1)/((lambda1-lambda2)*(lambda1-lambda3)*(lambda1-currentkme)) +
+                      (-E3*lambda2+E2*E3+pow(lambda2,2.0)-E2*lambda2)*exp(-currentTIME*lambda2)/((lambda1-lambda2)*(lambda2-lambda3)*(lambda2-currentkme)) +
+						(-E3*lambda3+E2*E3+pow(lambda3,2.0)-E2*lambda3)*exp(-currentTIME*lambda3)/((lambda1-lambda3)*(lambda3-lambda2)*(lambda3-currentkme)) +
+							(-E3*currentkme+E2*E3+pow(currentkme,2.0)-E2*currentkme)*exp(-currentTIME*currentkme)/((lambda1-currentkme)*(currentkme-lambda2)*(currentkme-lambda3))) + 	
+			exp(-currentTIME*lambda1)*(B*lambda1-C)/((lambda1-lambda2)*(lambda1-lambda3)*(lambda1-currentkme)) + 
+				exp(-currentTIME*currentkme)*(C-B*currentkme)/((lambda1-currentkme)*(currentkme-lambda2)*(currentkme-lambda3)) +
+					exp(-currentTIME*lambda2)*(C-B*lambda2)/((lambda1-lambda2)*(lambda2-lambda3)*(lambda2-currentkme)) +
+						exp(-currentTIME*lambda3)*(C-B*lambda3)/((lambda1-lambda3)*(lambda3-lambda2)*(lambda3-currentkme)));	
+    
     // Fill in Amounts and look for other doses
     A2[ counter ] = currentA2;
     A3[ counter ] = currentA3;
-    A1[ counter ] = currentA1 + AMT[ counter ] ;
+	AM[ counter ] = currentAM;
+    A1[ counter ] = currentA1 + AMT[ counter ];
 
   } // end for loop
 

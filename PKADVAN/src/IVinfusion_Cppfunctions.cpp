@@ -9,52 +9,36 @@ using namespace std;
 //-------------------------------------------------------------
 
 // [[Rcpp::export]]
-DataFrame OneCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
-    
-    //  Create vectors of each element used in function and for constructing output dataframe
+DataFrame OneCompIVinfusionCpp(DataFrame inputFrame){
+
+    //    Create vectors of each element used in function and for constructing output dataframe
     Rcpp::DoubleVector TIME = inputFrame["TIME"];
     Rcpp::DoubleVector AMT = inputFrame["AMT"];
     Rcpp::DoubleVector RATEALL = inputFrame["RATEALL"];
     Rcpp::DoubleVector k10 = inputFrame["k10"];
-	Rcpp::DoubleVector kmf = inputFrame["kmf"];
-    Rcpp::DoubleVector kme = inputFrame["kme"];
     Rcpp::DoubleVector A1 = inputFrame["A1"];
-	Rcpp::DoubleVector AM = inputFrame["AM"];
-    
+
     double currentTIME, currentDOSERATE,currentk10, previousA1, currentA1;
-	double previousAM, currentAM, currentkmf,currentkme, E1;
-    
+
     // in C++ arrays start at index 0, so to start at 2nd row need to set counter to 1
     // for counter from 1 to the number of rows in input data frame
     for(int counter = 1; counter < inputFrame.nrows(); counter++){
         //cout << counter << "\n";
-        
+
         // pull out all the variables that will be used for calculation
-        currentk10  = k10[ counter ];
-        currentDOSERATE    = RATEALL[ counter ];
-		currentkmf  = kmf[ counter ];
-		currentkme  = kme[ counter ];
-	
+        currentk10 = k10[ counter ];
+        currentDOSERATE = RATEALL[ counter ];
         currentTIME = TIME[ counter ] - TIME[ counter - 1];
         previousA1  = A1[ counter - 1 ];
-		previousAM  = AM[ counter -1 ];
-		
-		E1 = currentk10 + currentkmf;
-        
+
         // Calculate currentA1: Amount in the central compartment
-        currentA1 =  currentDOSERATE/E1*(1-exp(-currentTIME*E1))+previousA1*exp(-currentTIME*E1);
-        
-		// Calculate currentAM: Amount in the metabolite compartment
-		currentAM = previousAM*exp(-currentTIME*currentkme);
-		currentAM = currentAM + currentkmf*(currentDOSERATE*(exp(-currentTIME*E1)/(E1*(E1-currentkme)) - exp(-currentTIME*currentkme)/(currentkme*(E1-currentkme)) + 1/(E1*currentkme))
-                      + previousA1*(exp(-currentTIME*E1)/(currentkme-E1) + exp(-currentTIME*currentkme)/(E1-currentkme)));
-		
-        // Fill in Amounts
+        currentA1 =    currentDOSERATE/currentk10*(1-exp(-currentTIME*currentk10))+previousA1*exp(-currentTIME*currentk10);
+
+        // Fill in Amounts and check for other doses
         A1[ counter ] = currentA1 ;
-		AM[ counter ] = currentAM;
-        
+
     } // end for loop
-    
+
     return 0;
 }
 
@@ -62,81 +46,69 @@ DataFrame OneCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
 // 2 compartment IV infusion via ADVAN-style equations: Cpp code
 //-------------------------------------------------------------
 
+// input Dataframe from R
 // [[Rcpp::export]]
-DataFrame TwoCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
-    
-    //  Create vectors of each element used in function and for constructing output dataframe
+DataFrame TwoCompIVinfusionCpp(DataFrame inputFrame){
+
+    //    Create vectors of each element used in function and for constructing output dataframe
     Rcpp::DoubleVector TIME = inputFrame["TIME"];
     Rcpp::DoubleVector AMT = inputFrame["AMT"];
     Rcpp::DoubleVector RATEALL = inputFrame["RATEALL"];
     Rcpp::DoubleVector k10 = inputFrame["k10"];
     Rcpp::DoubleVector k12 = inputFrame["k12"];
     Rcpp::DoubleVector k21 = inputFrame["k21"];
-	Rcpp::DoubleVector kmf = inputFrame["kmf"];
-    Rcpp::DoubleVector kme = inputFrame["kme"];
     Rcpp::DoubleVector A1 = inputFrame["A1"];
     Rcpp::DoubleVector A2 = inputFrame["A2"];
-	Rcpp::DoubleVector AM = inputFrame["AM"];
-    
+
     double currentTIME, currentDOSERATE, currentk10, currentk12, currentk21, E1, E2, lambda1, lambda2;
-    double previousA1, previousA2, currentA1, currentA2, previousAM, currentAM, currentkmf,currentkme;
-    
+    double previousA1, previousA2, currentA1, currentA2;
+
     // in C++ arrays start at index 0, so to start at 2nd row need to set counter to 1
     // for counter from 1 to the number of rows in input data frame
     for(int counter = 1; counter < inputFrame.nrows(); counter++){
-        
+
         // pull out all the variables that will be used for calculation
-        currentk10  = k10[ counter ];
-        currentk12  = k12[ counter ];
-        currentk21  = k21[ counter ];
+        currentk10    = k10[ counter ];
+        currentk12    = k12[ counter ];
+        currentk21    = k21[ counter ];
         currentDOSERATE = RATEALL[ counter ];
-		currentkmf  = kmf[ counter ];
-		currentkme  = kme[ counter ];
-        
+
         currentTIME = TIME[ counter ] - TIME[ counter - 1];
-        previousA1  = A1[ counter - 1 ];
-        previousA2  = A2[ counter - 1 ];
-		previousAM  = AM[ counter -1 ];
-        
-        
-        //calculate hybrid rate constants
-        E1          = currentk10 + currentk12 + currentkmf;
-        E2          = currentk21 ;
-        
+        previousA1    = A1[ counter - 1 ];
+        previousA2    = A2[ counter - 1 ];
+
+
+     //calculate hybrid rate constants
+        E1                    = currentk10 + currentk12;
+        E2                    = currentk21 ;
+
         lambda1 = 0.5*((E1+E2)+sqrt(pow((E1+E2),2)-4*(E1*E2-currentk12*currentk21)));
         lambda2 = 0.5*((E1+E2)-sqrt(pow((E1+E2),2)-4*(E1*E2-currentk12*currentk21)));
-        
-        // Calculate currentA1: Amount in the central compartment
+
+     // Calculate currentA1: Amount in the central compartment
         currentA1 = (((previousA1*E2+currentDOSERATE+previousA2*currentk21)-previousA1*lambda1)*exp(-currentTIME*lambda1)-((previousA1*E2+currentDOSERATE+previousA2*currentk21)-previousA1*lambda2)*exp(-currentTIME*lambda2))/(lambda2-lambda1);
         currentA1 = currentA1 + currentDOSERATE*E2*(1/(lambda1*lambda2)+exp(-currentTIME*lambda1)/(lambda1*(lambda1-lambda2))-exp(-currentTIME*lambda2)/(lambda2*(lambda1-lambda2)));
-        
-        //calculate currentA2: Amount in the peripheral compartment
+
+	//calculate currentA2: Amount in the peripheral compartment
         currentA2 = (((previousA2*E1+previousA1*currentk12)-previousA2*lambda1)*exp(-currentTIME*lambda1)-((previousA2*E1+previousA1*currentk12)-previousA2*lambda2)*exp(-currentTIME*lambda2))/(lambda2-lambda1);
         currentA2 = currentA2 + currentDOSERATE*currentk12*(1/(lambda1*lambda2)+exp(-currentTIME*lambda1)/(lambda1*(lambda1-lambda2))-exp(-currentTIME*lambda2)/(lambda2*(lambda1-lambda2)));
-        
-		//calculate currentAM: Amount in the metabolite compartment
-		currentAM = previousAM*exp(-currentTIME*currentkme);
-		currentAM = currentAM + currentkmf*(exp(-currentTIME*lambda2)*(previousA1*lambda2-(previousA1*E2+currentDOSERATE+previousA2*currentk21))/((lambda1-lambda2)*(lambda2-currentkme)) +
-		    exp(-currentTIME*currentkme)*(previousA1*currentkme-(previousA1*E2+currentDOSERATE+previousA2*currentk21))/((lambda1-currentkme)*(currentkme-lambda2)) +
-		    exp(-currentTIME*lambda1)*((previousA1*E2+currentDOSERATE+previousA2*currentk21)-previousA1*lambda1)/((lambda1-lambda2)*(lambda1-currentkme)) +
-			currentDOSERATE*E2*(exp(-currentTIME*lambda2)/(lambda2*(lambda1-lambda2)*(lambda2-currentkme)) - exp(-currentTIME*lambda1)/(lambda1*(lambda1-lambda2)*(lambda1-currentkme))+exp(-currentTIME*currentkme)/(currentkme*(lambda1-currentkme)*(currentkme-lambda2)) + 1/(lambda1*lambda2*currentkme)));
-	
-        // Fill in Amounts
+
+    // Fill in Amounts
         A2[ counter ] = currentA2;
         A1[ counter ] = currentA1;
-		AM[ counter ] = currentAM;
-        
+
     } // end for loop
-    
+
     return 0;
 }
 
-//------------------------------------------------------------------------------
-// 3 compartment-first order absorption via ADVAN-style equations: Cpp Function
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------
+// 3 compartment IV infusion via ADVAN-style equations: Cpp code
+//-------------------------------------------------------------
 
+// input Dataframe from R
 // [[Rcpp::export]]
-DataFrame ThreeCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
+DataFrame ThreeCompIVinfusionCpp(DataFrame inputFrame){
 
     //    Create vectors of each element used in function and for constructing output dataframe
     Rcpp::DoubleVector TIME = inputFrame["TIME"];
@@ -147,18 +119,14 @@ DataFrame ThreeCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
     Rcpp::DoubleVector k21 = inputFrame["k21"];
     Rcpp::DoubleVector k13 = inputFrame["k13"];
     Rcpp::DoubleVector k31 = inputFrame["k31"];
-    Rcpp::DoubleVector kmf = inputFrame["kmf"];
-    Rcpp::DoubleVector kme = inputFrame["kme"];    
     Rcpp::DoubleVector A1 = inputFrame["A1"];
     Rcpp::DoubleVector A2 = inputFrame["A2"];
     Rcpp::DoubleVector A3 = inputFrame["A3"];
-    Rcpp::DoubleVector AM = inputFrame["AM"];
 
-    double currentTIME, currentDOSERATE, currentk10, currentk12, currentk21, currentk13, currentk31,currentkmf, currentkme;
-    double previousA1, previousA2, previousA3,previousAM, currentA1, currentA2,currentA3, currentAM ;
+    double currentTIME, currentDOSERATE, currentk10, currentk12, currentk21, currentk13, currentk31, previousA1, previousA2, previousA3, currentA1, currentA2,currentA3 ;
     double a, b, c, m, n, Q, alpha, beta, gamma, theta, B, C, I, J ;
     double E1, E2, E3, lambda1, lambda2, lambda3;
-    
+
     // in C++ arrays start at index 0, so to start at 2nd row need to set counter to 1
     // for counter from 1 to the number of rows in input data frame
     for(int counter = 1; counter < inputFrame.nrows(); counter++){
@@ -170,17 +138,14 @@ DataFrame ThreeCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
         currentk13    = k13[ counter ];
         currentk31    = k31[ counter ];
         currentDOSERATE = RATEALL[ counter ];
-		currentkmf    = kmf[ counter ];
-		currentkme    = kme[ counter ];
 
         currentTIME = TIME[ counter ] - TIME[ counter - 1];
         previousA1    = A1[ counter - 1 ];
         previousA2    = A2[ counter - 1 ];
         previousA3    = A3[ counter - 1 ];
-		previousAM    = AM[ counter -1 ];
 
      //calculate hybrid rate constants
-        E1                    = currentk10 + currentk12 + currentk13 + currentkmf;
+        E1                    = currentk10 + currentk12 + currentk13;
         E2                    = currentk21;
         E3                    = currentk31;
 
@@ -206,37 +171,28 @@ DataFrame ThreeCompIVinfusionOneCompMetabCpp(DataFrame inputFrame){
         I = previousA1*currentk12*E3-previousA2*currentk13*currentk31+previousA3*currentk12*currentk31;
         J = previousA1*currentk13*E2+previousA2*currentk13*currentk21-previousA3*currentk12*currentk21;
 
-        // Calculate currentA1: Amount in the central compartment
-        // Split equation into multiple steps to ensure arithmetic correctness
-    	currentA1 = previousA1*(exp(-currentTIME*lambda1)*(E2-lambda1)*(E3-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E2-lambda2)*(E3-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E2-lambda3)*(E3-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
+     // Calculate currentA1: Amount in the central compartment
+     // Split equation into multiple steps to ensure arithmatic correctness
+        currentA1 = previousA1*(exp(-currentTIME*lambda1)*(E2-lambda1)*(E3-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E2-lambda2)*(E3-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E2-lambda3)*(E3-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
         currentA1 = currentA1 + exp(-currentTIME*lambda1)*(C-B*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(B*lambda2-C)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(B*lambda3-C)/((lambda1-lambda3)*(lambda3-lambda2)) ;
         currentA1 = currentA1 + currentDOSERATE*((E2*E3)/(lambda1*lambda2*lambda3)-exp(-currentTIME*lambda1)*(E2-lambda1)*(E3-lambda1)/(lambda1*(lambda2-lambda1)*(lambda3-lambda1))-exp(-currentTIME*lambda2)*(E2-lambda2)*(E3-lambda2)/(lambda2*(lambda1-lambda2)*(lambda3-lambda2))-exp(-currentTIME*lambda3)*(E2-lambda3)*(E3-lambda3)/(lambda3*(lambda1-lambda3)*(lambda2-lambda3)));
 
-        //calculate currentA2: Amount in the peripheral compartment1
-        currentA2 = previousA2*(exp(-currentTIME*lambda1)*(E1-lambda1)*(E3-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E1-lambda2)*(E3-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E1-lambda3)*(E3-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
-        currentA2 = currentA2 + exp(-currentTIME*lambda1)*(I-previousA1*currentk12*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(previousA1*currentk12*lambda2-I)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(previousA1*currentk12*lambda3-I)/((lambda1-lambda3)*(lambda3-lambda2)); 
+    //calculate currentA2: Amount in the peripheral compartment1
+    	currentA2 = previousA2*(exp(-currentTIME*lambda1)*(E1-lambda1)*(E3-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E1-lambda2)*(E3-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E1-lambda3)*(E3-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
+        currentA2 = currentA2 +    exp(-currentTIME*lambda1)*(I-previousA1*currentk12*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(previousA1*currentk12*lambda2-I)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(previousA1*currentk12*lambda3-I)/((lambda1-lambda3)*(lambda3-lambda2));
         currentA2 = currentA2 + currentDOSERATE*currentk12*(E3/(lambda1*lambda2*lambda3)-exp(-currentTIME*lambda1)*(E3-lambda1)/(lambda1*(lambda2-lambda1)*(lambda3-lambda1))-exp(-currentTIME*lambda2)*(E3-lambda2)/(lambda2*(lambda1-lambda2)*(lambda3-lambda2))-exp(-currentTIME*lambda3)*(E3-lambda3)/(lambda3*(lambda1-lambda3)*(lambda2-lambda3)));
 
-        //calculate currentA3: Amount in the peripheral compartment2
+    //calculate currentA3: Amount in the peripheral compartment2
         currentA3 = previousA3*(exp(-currentTIME*lambda1)*(E1-lambda1)*(E2-lambda1)/((lambda2-lambda1)*(lambda3-lambda1))+exp(-currentTIME*lambda2)*(E1-lambda2)*(E2-lambda2)/((lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E1-lambda3)*(E2-lambda3)/((lambda1-lambda3)*(lambda2-lambda3)));
-        currentA3 = currentA3 + exp(-currentTIME*lambda1)*(J-previousA1*currentk13*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(previousA1*currentk13*lambda2-J)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(previousA1*currentk13*lambda3-J)/((lambda1-lambda3)*(lambda3-lambda2)); 
+        currentA3 = currentA3 +    exp(-currentTIME*lambda1)*(J-previousA1*currentk13*lambda1)/((lambda1-lambda2)*(lambda1-lambda3))+exp(-currentTIME*lambda2)*(previousA1*currentk13*lambda2-J)/((lambda1-lambda2)*(lambda2-lambda3))+exp(-currentTIME*lambda3)*(previousA1*currentk13*lambda3-J)/((lambda1-lambda3)*(lambda3-lambda2));
         currentA3 = currentA3 + currentDOSERATE*currentk13*(E2/(lambda1*lambda2*lambda3)-exp(-currentTIME*lambda1)*(E2-lambda1)/(lambda1*(lambda2-lambda1)*(lambda3-lambda1))-exp(-currentTIME*lambda2)*(E2-lambda2)/(lambda2*(lambda1-lambda2)*(lambda3-lambda2))-exp(-currentTIME*lambda3)*(E2-lambda3)/(lambda3*(lambda1-lambda3)*(lambda2-lambda3)));
- 
-		//calculate currentAM: Amount in the metabolite compartment
-        currentAM = previousAM*exp(-currentTIME*currentkme) +currentkmf*previousA1*(exp(-currentTIME*lambda1)*(E2-lambda1)*(E3-lambda1)/((lambda2-lambda1)*(lambda3-lambda1)*(currentkme-lambda1))+exp(-currentTIME*lambda2)*(E2-lambda2)*(E3-lambda2)/((currentkme-lambda2)*(lambda1-lambda2)*(lambda3-lambda2))+exp(-currentTIME*lambda3)*(E2-lambda3)*(E3-lambda3)/((currentkme-lambda3)*(lambda1-lambda3)*(lambda2-lambda3))+exp(-currentTIME*currentkme)*(E2-currentkme)*(E3-currentkme)/((lambda1-currentkme)*(lambda2-currentkme)*(lambda3-currentkme)));
-        currentAM = currentAM + currentkmf*(exp(-currentTIME*lambda1)*(B*lambda1-C)/((lambda1-lambda2)*(lambda1-lambda3)*(lambda1-currentkme))+exp(-currentTIME*lambda2)*(C-B*lambda2)/((lambda1-lambda2)*(lambda2-lambda3)*(lambda2-currentkme))+exp(-currentTIME*lambda3)*(C-B*lambda3)/((lambda1-lambda3)*(lambda3-lambda2)*(lambda3-currentkme))-exp(-currentTIME*currentkme)*(B*currentkme-C)/((lambda1-currentkme)*(currentkme-lambda2)*(currentkme-lambda3))); 
-        currentAM = currentAM + currentkmf*currentDOSERATE*((E2*E3)/(lambda1*lambda2*lambda3*currentkme)-exp(-currentTIME*lambda1)*(E2-lambda1)*(E3-lambda1)/(lambda1*(currentkme-lambda1)*(lambda2-lambda1)*(lambda3-lambda1))-exp(-currentTIME*lambda2)*(E2-lambda2)*(E3-lambda2)/(lambda2*(currentkme-lambda2)*(lambda1-lambda2)*(lambda3-lambda2))-exp(-currentTIME*lambda3)*(E2-lambda3)*(E3-lambda3)/(lambda3*(currentkme-lambda3)*(lambda1-lambda3)*(lambda2-lambda3))-exp(-currentTIME*currentkme)*(E2-currentkme)*(E3-currentkme)/(currentkme*(lambda1-currentkme)*(lambda2-currentkme)*(lambda3-currentkme)));
-    
-        // Fill in Amounts
-        A1[ counter ] = currentA1;
+
+    // Fill in Amounts
         A2[ counter ] = currentA2;
         A3[ counter ] = currentA3;
-        AM[ counter ] = currentAM;	
+        A1[ counter ] = currentA1;
 
     } // end for loop
 
-
     return 0;
 }
-
-
