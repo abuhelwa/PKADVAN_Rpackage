@@ -49,39 +49,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// OneCompIVbolusOneCompMetabCpp
-DataFrame OneCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
-RcppExport SEXP PKADVAN_OneCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
-    __result = Rcpp::wrap(OneCompIVbolusOneCompMetabCpp(inputFrame));
-    return __result;
-END_RCPP
-}
-// TwoCompIVbolusOneCompMetabCpp
-DataFrame TwoCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
-RcppExport SEXP PKADVAN_TwoCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
-    __result = Rcpp::wrap(TwoCompIVbolusOneCompMetabCpp(inputFrame));
-    return __result;
-END_RCPP
-}
-// ThreeCompIVbolusOneCompMetabCpp
-DataFrame ThreeCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
-RcppExport SEXP PKADVAN_ThreeCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
-    __result = Rcpp::wrap(ThreeCompIVbolusOneCompMetabCpp(inputFrame));
-    return __result;
-END_RCPP
-}
 // OneCompIVbolusCpp
 DataFrame OneCompIVbolusCpp(DataFrame inputFrame);
 RcppExport SEXP PKADVAN_OneCompIVbolusCpp(SEXP inputFrameSEXP) {
@@ -112,6 +79,39 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
     __result = Rcpp::wrap(ThreeCompIVbolusCpp(inputFrame));
+    return __result;
+END_RCPP
+}
+// OneCompIVbolusOneCompMetabCpp
+DataFrame OneCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
+RcppExport SEXP PKADVAN_OneCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
+    __result = Rcpp::wrap(OneCompIVbolusOneCompMetabCpp(inputFrame));
+    return __result;
+END_RCPP
+}
+// TwoCompIVbolusOneCompMetabCpp
+DataFrame TwoCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
+RcppExport SEXP PKADVAN_TwoCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
+    __result = Rcpp::wrap(TwoCompIVbolusOneCompMetabCpp(inputFrame));
+    return __result;
+END_RCPP
+}
+// ThreeCompIVbolusOneCompMetabCpp
+DataFrame ThreeCompIVbolusOneCompMetabCpp(DataFrame inputFrame);
+RcppExport SEXP PKADVAN_ThreeCompIVbolusOneCompMetabCpp(SEXP inputFrameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< DataFrame >::type inputFrame(inputFrameSEXP);
+    __result = Rcpp::wrap(ThreeCompIVbolusOneCompMetabCpp(inputFrame));
     return __result;
 END_RCPP
 }

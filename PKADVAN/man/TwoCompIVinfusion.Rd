@@ -10,25 +10,25 @@ TwoCompIVinfusion(inputDataFrame)
 \item{inputDataFrame}{which is the NONMEM-style data frame that contains columns for: \code{ID, TIME, AMT, RATE, CL, V1, Q, V2}.\cr}
 }
 \value{
-The function calculates the amounts in the central (\code{A1} & individual predicted concentrations, \code{IPRED}) and peripheral compartment  \code{(A2)} and returns the output added to \code{inputDataFrame}
+The function calculates the amounts in the central (\code{A1} & individual predicted concentrations, \code{IPRED}) and peripheral compartment    \code{(A2)} and returns the output added to \code{inputDataFrame}
 }
 \description{
 \code{TwoCompIVinfusion} function accepts NONMEM-style data frame for one subject and calculates drug amount in the respective compartments. The data frame should have the following columns: \code{ID, TIME, AMT, RATE, CL, V1, Q, V2}
 
 where:
 \tabular{ll}{
- \code{ID}: \tab is the subject ID\cr
- \code{TIME}:\tab is the sampling time points\cr
- \code{AMT}:\tab is the dose\cr
- \code{RATE}:\tab is the infusion rate\cr
- \code{CL}:\tab is the central compartment clearance\cr
- \code{V1}:\tab is the central volume of distribution\cr
- \code{Q}:\tab  is the inter-compartmental clearance\cr
- \code{V2}:\tab is the peripheral volume of distribution\cr
- }
+   \code{ID}: \tab is the subject ID\cr
+   \code{TIME}:\tab is the sampling time points\cr
+   \code{AMT}:\tab is the dose\cr
+   \code{RATE}:\tab is the infusion rate\cr
+   \code{CL}:\tab is the central compartment clearance\cr
+   \code{V1}:\tab is the central volume of distribution\cr
+   \code{Q}:\tab    is the inter-compartmental clearance\cr
+   \code{V2}:\tab is the peripheral volume of distribution\cr
+   }
 }
 \details{
-To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),  the function
+To simulate a population (i.e. the \code{inputDataFrame} has more than one subject \code{ID}),    the function
 has to be applied for each subject \code{ID}. One way of doing that is through using the \code{ddply} functionality
 in the \pkg{plyr} package in R. The \code{ddply} functionality allows applying the \pkg{PKADVAN} function to each subject
 \code{ID} and combines the results into a data frame. Please load \pkg{plyr} package in \code{R} before
