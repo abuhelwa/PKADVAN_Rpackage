@@ -1,7 +1,7 @@
 #' PKADVAN: Pharmacokinetic Simulations Using the ADVAN-style Analytical Solutions of Common Pharmacokinetic Models.
 #'
 #' @description The \code{PKADVAN} is an R-package for simulating pharmacokinetic data from various population pharmacokinetic models.
-#' The \code{PKADVAN} package presents the ADVAN-style analytical solutions for 26 different pharmacokinetic models, including the basic models published
+#' The \code{PKADVAN} package presents the ADVAN-style analytical solutions functions for 26 different pharmacokinetic models, including the basic models published
 #' by \emph{Abuhelwa et al.} (1), for the 1, 2, and 3 compartments IV bolus, infusion, and first-order absoprtion models.
 #' The ADVAN-style analytical solutions functions simulate the time-course of drug amounts in the respective compartments of a pharmacokinetic system and
 #' they \emph{ADVANCE} the solution of the model from one time point to the next, allowing for any dose or time-changing covariates to be accounted for.

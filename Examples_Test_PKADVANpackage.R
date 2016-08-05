@@ -39,12 +39,12 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
         # a.  1comp IV bolus
         # b.  2comp IV bolus
         # c.  3comp IV bolus
-		
-    # 2.  IV infusion models 
+
+    # 2.  IV infusion models
         # a.  1comp IV infusion
         # b.  2comp IV infusion
         # c.  3comp IV infusion
-		
+
     # 3.  First order absorption models
         # a.  1comp first-order absorption
         # b.  2comp first-order absorption
@@ -103,6 +103,7 @@ doserows <- subset(df, TIME %in% dosetimes)
 
 #Dose = 100 mg, Dose 1  at time 0
 doserows$AMT <- 100
+doserows$MDV <- 1
 
 #Add back dose information
 df <- rbind(df,doserows)
@@ -142,6 +143,24 @@ head(simdf)
 head(simdf)
 tail(simdf)
 
+#plotting
+#Subset MDV==0
+simdf <- subset(simdf, MDV==0)
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
 plotobj <- NULL
 titletext <- expression(atop('Simulated Drug Concentrations',
                              atop(italic("Red line is the median. Gray band is the 90% confidence interval")
@@ -208,9 +227,9 @@ head(simdf)
 #?processing time
 system.time(ddply(dfadvan, .(ID), ThreeCompIVbolus))
 
-#============================================
-# First-order absorption Models Basic Models
-#============================================
+#================================
+# First-order absorption Models
+#================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,48,12))
@@ -275,8 +294,24 @@ head(simdf)
 simdf$DV <- simdf$IPRED*(1+PROP)
 head(simdf)
 
+#plotting
+#subset data for MDV ==0
 simdf <- subset(simdf, MDV==0)
 
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
 plotobj <- NULL
 titletext <- expression(atop('Simulated Drug Concentrations',
                              atop(italic("Red line is the median. Gray band is the 90% confidence interval")
@@ -295,6 +330,14 @@ system.time(ddply(dfadvan, .(ID), OneCompFirstOrderAbs))
 #----------------------------------------------------------------
 # 2 compartment-first order absorption  via PKADVAN package
 #----------------------------------------------------------------
+#Define between subject variability (BSV)
+#Use random number generator to simulate residuals from a normal distribution
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
+BSVF1 <- rnorm(nsub, mean = 0, sd = 0.2)  #BSV on F
+
+#Define residual error model
+PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
+
 #Set population PK parameters for 2-compartment model
 CLpop <- 2       # clearance
 V2pop  <- 10     # central volume of distribution
@@ -307,22 +350,66 @@ F1pop <- 1       # bioavailability
 dfadvan <- df
 
 #Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*(dfadvan$CLCR/100)           #creatinine clearance (CLCR) added as a covariate on CL
+dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)           #creatinine clearance (CLCR) added as a covariate on CL
 dfadvan$V2 <- V2pop
 dfadvan$Q  <- Qpop
 dfadvan$V3 <- V3pop
 dfadvan$KA <- KApop
-dfadvan$F1 <- F1pop
+dfadvan$F1 <- F1pop*exp(BSVF1)
 
 #apply PKADVAN function
 simdf <- ddply(dfadvan, .(ID), TwoCompFirstOrderAbs)
 head(simdf)
 
+#Add residual error model
+#For example: proportional error model on IPRED
+simdf$DV <- simdf$IPRED*(1+PROP)
+head(simdf)
+
+#plotting
+#subset data for MDV ==0
+simdf <- subset(simdf, MDV==0)
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#?processing time
 system.time(ddply(dfadvan, .(ID), TwoCompFirstOrderAbs))
 
 #---------------------------------------------------------------
 # 3 compartment-first order absorption via PKADVAN package
 #---------------------------------------------------------------
+#Define between subject variability (BSV)
+#Use random number generator to simulate residuals from a normal distribution
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
+BSVF1 <- rnorm(nsub, mean = 0, sd = 0.2)  #BSV on F
+
+#Define residual error model
+PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
+
 #Set population PK parameters for 3-compartment model
 CLpop <- 2          # clearance
 V2pop <- 10         # central volume of distribution
@@ -337,19 +424,55 @@ F1pop <- 0.5          # bioavailability
 #Modify df for ADVAN calculation and include any covariates on PK parameters
 dfadvan <- df
 #Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*(dfadvan$CLCR/100)    #creatinine clearance (CLCR) added as a covariate on CL
+dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)    #creatinine clearance (CLCR) added as a covariate on CL
 dfadvan$V2 <- V2pop
 dfadvan$Q3 <- Q3pop
 dfadvan$V3 <- V3pop
 dfadvan$Q4 <- Q4pop
 dfadvan$V4 <- V4pop
 dfadvan$KA <- KApop
-dfadvan$F1 <- F1pop
+dfadvan$F1 <- F1pop*exp(BSVF1)
 
 #apply PKADVAN function
 simdf <- ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs)
 head(simdf)
 
+#Add residual error model
+#For example: proportional error model on IPRED
+simdf$DV <- simdf$IPRED*(1+PROP)
+head(simdf)
+
+#plotting
+#subset data for MDV ==0
+simdf <- subset(simdf, MDV==0)
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#?processing time
 system.time(ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs))
 
 #=============================
@@ -366,7 +489,7 @@ tlast <- 72
 dosetimessim <- c(0,20.5)
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimessim))),"AMT"=0,MDV=0,"RATE"=0,"CLCR"=90)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(0.5,seq(0,tlast,1),dosetimessim))),"AMT"=0,MDV=0,"RATE"=0,"CLCR"=90)
 
 df$CLCR[df$ID>=0.5*nsub] <- 70
 
@@ -412,20 +535,9 @@ head(simdf)
 #For example; additive error model
 simdf$DV <- simdf$IPRED+PROP
 
+#plotting
+#subset data for MDV==0
 simdf <- subset(simdf, MDV==0)
-
-#DV
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations',
-                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
-                             )))
-plotobj <- ggplot(data=simdf)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
 
 #IPRED
 plotobj <- NULL
@@ -435,6 +547,19 @@ titletext <- expression(atop('Simulated Drug Concentrations',
 plotobj <- ggplot(data=simdf)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
 plotobj <- plotobj + ggtitle(titletext)
 plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
@@ -490,20 +615,26 @@ dfadvan$V3  <- V3pop
 simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion)
 #system.time(simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion))
 
-#=======================================================================================
-#                                 Transit Absorption models Models
-#=======================================================================================
+#===========================
+# Transit Absorption Models
+#===========================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(0)
 tlast <- 36
+
+#Now define finer sample times for after a dose to capture Cmax
+doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
+
+#Use the outer product but with addition to expand this doseseq for all dosetimes
+PKtimes <- outer(dosetimes,doseseq,"+")
 
 #set number of subjects
 nsub <- 1000
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
 df$CLCR[df$ID <= 0.5*nsub] <- 70
 
 doserows <- subset(df, TIME%in%dosetimes)
@@ -555,29 +686,44 @@ simdf1$DV <- simdf1$IPRED*(1+PROP)
 #----------------------------------------------------------------
 simdf2 <- ddply(dfadvan, .(ID), OneCompTwoTransit)
 simdf2$TRANSIT <- "2-transit"
+
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf2$DV <- simdf2$IPRED*(1+PROP)
 #----------------------------------------------------------------
 # 1 compartment-3-transit  via PKADVAN package
 #----------------------------------------------------------------
 simdf3 <- ddply(dfadvan, .(ID), OneCompThreeTransit)
 simdf3$TRANSIT <- "3-transit"
+
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf3$DV <- simdf3$IPRED*(1+PROP)
 #----------------------------------------------------------------
 # 1 compartment-4-transit  via PKADVAN package
 #----------------------------------------------------------------
 simdf4 <- ddply(dfadvan, .(ID), OneCompFourTransit)
 simdf4$TRANSIT <- "4-transit"
 
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf4$DV <- simdf4$IPRED*(1+PROP)
+
 #Plot all!
-simdf1 <- subset(simdf1, select = c(ID,TIME,IPRED,TRANSIT))
-simdf2 <- subset(simdf2, select = c(ID,TIME,IPRED,TRANSIT))
-simdf3 <- subset(simdf3, select = c(ID,TIME,IPRED,TRANSIT))
-simdf4 <- subset(simdf4, select = c(ID,TIME,IPRED,TRANSIT))
+simdf1 <- subset(simdf1, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf2 <- subset(simdf2, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf3 <- subset(simdf3, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf4 <- subset(simdf4, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
 
 simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
 
+#plotting
+#subset MDV==0
+simdfall <- subset(simdfall, MDV==0)
+
 #IPRED
 plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations',
-                             ))
+titletext <- expression(atop('Simulated Drug Concentrations'))
 plotobj <- ggplot(data=simdfall)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED,colour=TRANSIT),fun.y=median, geom="line",  size=1)
 plotobj <- plotobj + ggtitle(titletext)
@@ -588,6 +734,18 @@ plotobj
 plotobj <- plotobj + facet_wrap(~TRANSIT)
 plotobj
 
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations'))
+plotobj <- ggplot(data=simdfall)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV,colour=TRANSIT),fun.y=median, geom="line",  size=1)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+plotobj <- plotobj + facet_wrap(~TRANSIT)
+plotobj
 #system.time(simdf <- ddply(dfadvan, .(ID), OneCompOneTransit))
 #system.time(simdf <- ddply(dfadvan, .(ID), OneCompTwoTransit))
 #system.time(simdf <- ddply(dfadvan, .(ID), OneCompThreeTransit))
@@ -627,12 +785,20 @@ simdf1 <- ddply(dfadvan, .(ID), TwoCompOneTransit)
 simdf1$TRANSIT <- "1-transit"
 head(simdf)
 
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf1$DV <- simdf1$IPRED*(1+PROP)
+
 #------------------------
 # 2 compartment-2-transit
 #------------------------
 simdf2 <- ddply(dfadvan, .(ID), TwoCompTwoTransit)
 simdf2$TRANSIT <- "2-transit"
 head(simdf)
+
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf2$DV <- simdf2$IPRED*(1+PROP)
 
 #------------------------
 # 2 compartment-3-transit
@@ -641,6 +807,10 @@ simdf3 <- ddply(dfadvan, .(ID), TwoCompThreeTransit)
 simdf3$TRANSIT <- "3-transit"
 head(simdf)
 
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf3$DV <- simdf3$IPRED*(1+PROP)
+
 #------------------------
 # 2 compartment-4-transit
 #------------------------
@@ -648,20 +818,40 @@ simdf4 <- ddply(dfadvan, .(ID), TwoCompFourTransit)
 simdf4$TRANSIT <- "4-transit"
 head(simdf)
 
+#Add residual unexplained variability (within subject variability)
+#For example; additive error model
+simdf4$DV <- simdf4$IPRED*(1+PROP)
+
 #Plot all!
-simdf1 <- subset(simdf1, select = c(ID,TIME,IPRED,TRANSIT))
-simdf2 <- subset(simdf2, select = c(ID,TIME,IPRED,TRANSIT))
-simdf3 <- subset(simdf3, select = c(ID,TIME,IPRED,TRANSIT))
-simdf4 <- subset(simdf4, select = c(ID,TIME,IPRED,TRANSIT))
+simdf1 <- subset(simdf1, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf2 <- subset(simdf2, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf3 <- subset(simdf3, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
+simdf4 <- subset(simdf4, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
 
 simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
 
+#ploting
+#subet MDV==0
+simdfall <- subset(MDV==0)
+
 #IPRED
 plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations',
-))
+titletext <- expression(atop('Simulated Drug Concentrations'))
 plotobj <- ggplot(data=simdfall)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED,colour=TRANSIT),fun.y=median, geom="line",  size=1)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+plotobj <- plotobj + facet_wrap(~TRANSIT)
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations'))
+plotobj <- ggplot(data=simdfall)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV,colour=TRANSIT),fun.y=median, geom="line",  size=1)
 plotobj <- plotobj + ggtitle(titletext)
 plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
@@ -675,10 +865,9 @@ plotobj
 #system.time(simdf <- ddply(dfadvan, .(ID), TwoCompThreeTransit))
 #ystem.time(simdf <- ddply(dfadvan, .(ID), TwoCompFourTransit))
 
-
-#===================================================================================
-#     First-order absorption first-order formation metabolite models
-#===================================================================================
+#=======================================================================
+#   First-order absorption first-order metabolite formation models
+#=======================================================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 dosetimes <- c(seq(0,24,12))
