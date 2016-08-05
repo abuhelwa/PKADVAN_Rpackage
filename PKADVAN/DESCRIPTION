@@ -6,20 +6,7 @@ Version: 0.1.0
 Author: Ahmad Abuhelwa <Ahmad.Abuhelwa@mymail.unisa.edu.au>
 Maintainer: Ahmad Abuhelwa <Ahmad.Abuhelwa@mymail.unisa.edu.au> and Richard
     Upton <Richard.Upton@unisa.edu.au>
-Description: This package presents the ADVAN-style analytical solutions for
-    1, 2, and 3 compartments IV bolus, infusion, and first-order absoprtion
-    pharmacokinetic models for simulating pharmacokinetic data. The package allows
-    for simulating arbitrary dosing regimens and acounts for changes in covariate/
-    parameter values that may occur at discrete times within and/or between dosing
-    intervals.The ADVAN-style analytical solutions were successfully validated
-    against NONMEM outputs. The ADVAN-style analytical solutions presented in this
-    package overcome obstacles to implementing the classical analytical solutions
-    in software, and have speed advantages over solutions using differential
-    equation solvers and, therefore, can be applied for simulation from stochastic
-    population pharmacokinetic models coded in R and incorporated into reactive
-    Shiny Web applications as they allow for simulating larger populations (e.g.
-    1000 subjects) without compromising the speed and the reactivity benefits of the
-    Shiny application .
+Description: The PKADVAN package is an R package for simulating pharmacokinetic data from various population pharmacokinetic models. The package presents the ADVAN-style analytical solutions functions for 26 different pharmacokinetic models and allows for simulating arbitrary dosing regimens and acounts for changes in covariate/parameter values that may occur at discrete times within and/or between dosing intervals. The ADVAN-style analytical solutions were successfully validated against NONMEM outputs. The ADVAN-style analytical functions presented herein overcome obstacles to implementing the classical analytical solutions in software, and have speed advantages over solutions using differential equation solvers and, therefore, can be applied for simulation from stochastic population pharmacokinetic models coded in R and incorporated into reactive Shiny Web applications. The speed of the PKADVAN functions allows for simulating larger populations without compromising the reactivity benefits of the Shiny application .
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
