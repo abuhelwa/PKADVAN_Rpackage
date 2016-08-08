@@ -32,7 +32,7 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompIVinfusionOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -134,7 +134,7 @@ OneCompIVinfusionOneCompMetab <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompIVinfusionOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -243,7 +243,7 @@ TwoCompIVinfusionOneCompMetab <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompIVinfusionOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'

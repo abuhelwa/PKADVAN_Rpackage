@@ -31,7 +31,7 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompOneTransit)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -119,7 +119,7 @@ TwoCompOneTransit <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompTwoTransit)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -209,7 +209,7 @@ TwoCompTwoTransit <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompThreeTransit)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -301,7 +301,7 @@ TwoCompThreeTransit <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompFourTransit)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'

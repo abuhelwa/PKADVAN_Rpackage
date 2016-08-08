@@ -28,7 +28,7 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -109,7 +109,7 @@ OneCompFirstOrderAbs <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
@@ -196,7 +196,7 @@ TwoCompFirstOrderAbs <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
 #' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
