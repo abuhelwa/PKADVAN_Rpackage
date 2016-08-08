@@ -29,7 +29,7 @@
 #' (e.g. \code{CL, V, Q}). Please see help pages for more details!
 #'
 #' @section PKADVAN Functions:
-#' The PKADVAN functions are capable of simulating arbitrary dosing regemins and can account for time-changing covariate
+#' The PKADVAN functions are capable of simulating arbitrary dosing regimens and can account for time-changing covariate
 #' structures; however, covariate effects on respective parameters must be calculated prior porocessing
 #' simulations. Please see examples for more details!
 #'
