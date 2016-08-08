@@ -12,7 +12,7 @@
 #' models coded in R and incorporated into reactive Shiny Web applications. The speed of the integrated R/C++
 #' analytical solutions is an important factor as they allow for simulating larger populations without compromising the reactivity benefits of the Shiny application.
 #'
-#' All the \code{PKADVAN} functions were successfully validated against the commericially available population pharmacokinetic modelling software; NONMEM (2).
+#' All the \code{PKADVAN} functions were successfully validated against the commercially available population pharmacokinetic modelling software; NONMEM (2).
 #'
 #' @details \tabular{ll}{
 #' Package:\tab \code{PKADVAN}\cr
