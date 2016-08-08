@@ -28,8 +28,8 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompFirstOrderAbs}}, \code{\link{ThreeCompFirstOrderAbs}}
@@ -109,8 +109,8 @@ OneCompFirstOrderAbs <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompFirstOrderAbs}}, \code{\link{ThreeCompFirstOrderAbs}}
@@ -196,8 +196,8 @@ TwoCompFirstOrderAbs <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompFirstOrderAbs)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompFirstOrderAbs}}, \code{\link{TwoCompFirstOrderAbs}}

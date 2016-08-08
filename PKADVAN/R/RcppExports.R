@@ -25,18 +25,6 @@ ThreeCompFirstOrderAbsOneCompMetabCpp <- function(inputFrame) {
     .Call('PKADVAN_ThreeCompFirstOrderAbsOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
 }
 
-OneCompIVbolusCpp <- function(inputFrame) {
-    .Call('PKADVAN_OneCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
-}
-
-TwoCompIVbolusCpp <- function(inputFrame) {
-    .Call('PKADVAN_TwoCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
-}
-
-ThreeCompIVbolusCpp <- function(inputFrame) {
-    .Call('PKADVAN_ThreeCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
-}
-
 OneCompIVbolusOneCompMetabCpp <- function(inputFrame) {
     .Call('PKADVAN_OneCompIVbolusOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
 }
@@ -47,6 +35,18 @@ TwoCompIVbolusOneCompMetabCpp <- function(inputFrame) {
 
 ThreeCompIVbolusOneCompMetabCpp <- function(inputFrame) {
     .Call('PKADVAN_ThreeCompIVbolusOneCompMetabCpp', PACKAGE = 'PKADVAN', inputFrame)
+}
+
+OneCompIVbolusCpp <- function(inputFrame) {
+    .Call('PKADVAN_OneCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
+}
+
+TwoCompIVbolusCpp <- function(inputFrame) {
+    .Call('PKADVAN_TwoCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
+}
+
+ThreeCompIVbolusCpp <- function(inputFrame) {
+    .Call('PKADVAN_ThreeCompIVbolusCpp', PACKAGE = 'PKADVAN', inputFrame)
 }
 
 OneCompIVinfusionCpp <- function(inputFrame) {

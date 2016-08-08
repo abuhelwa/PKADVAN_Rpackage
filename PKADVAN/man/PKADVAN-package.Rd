@@ -16,7 +16,7 @@ A main application for the \code{PKADVAN} package is for simulation from stochas
 models coded in R and incorporated into reactive Shiny Web applications. The speed of the integrated R/C++
 analytical solutions is an important factor as they allow for simulating larger populations without compromising the reactivity benefits of the Shiny application.
 
-All the \code{PKADVAN} functions were successfully validated against the commericially available population pharmacokinetic modelling software; NONMEM (2).
+All the \code{PKADVAN} functions were successfully validated against the commercially available population pharmacokinetic modelling software; NONMEM (2).
 }
 \details{
 \tabular{ll}{
@@ -35,7 +35,7 @@ The data frame should have the following columns: \code{ID, TIME, AMT}, in addit
 }
 \section{PKADVAN Functions}{
 
-The PKADVAN functions are capable of simulating arbitrary dosing regemins and can account for time-changing covariate
+The PKADVAN functions are capable of simulating arbitrary dosing regimens and can account for time-changing covariate
 structures; however, covariate effects on respective parameters must be calculated prior porocessing
 simulations. Please see examples for more details!
 }

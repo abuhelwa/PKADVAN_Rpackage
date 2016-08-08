@@ -26,8 +26,8 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompIVbolus)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompIVbolus}}
@@ -103,8 +103,8 @@ OneCompIVbolus <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompIVbolus)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #'
@@ -184,8 +184,8 @@ TwoCompIVbolus <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompIVbolus)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompIVbolus}}

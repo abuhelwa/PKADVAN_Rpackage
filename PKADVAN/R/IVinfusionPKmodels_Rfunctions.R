@@ -27,8 +27,8 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompIVinfusion)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompIVinfusion}}
@@ -105,8 +105,8 @@ OneCompIVinfusion <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompIVinfusion)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompIVinfusion}}
@@ -196,8 +196,8 @@ TwoCompIVinfusion <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompIVinfusion)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompIVinfusion}}

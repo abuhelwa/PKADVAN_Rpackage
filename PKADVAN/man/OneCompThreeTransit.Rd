@@ -35,8 +35,8 @@ processsing simulations.
 
 \code{ddply(inputDataFrame, .(ID), OneCompThreeTransit)}
 
-The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-covariate effects on respective parameters must be calculated prior porocessing simulations.
+The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+covariate effects on respective parameters must be calculated prior processing simulations.
 See examples below for more details.
 }
 \author{

@@ -35,8 +35,8 @@
 #'
 #' \code{ddply(inputDataFrame, .(ID), OneCompFirstOrderAbsOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
@@ -134,8 +134,8 @@ OneCompFirstOrderAbsOneCompMetab <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), TwoCompFirstOrderAbsOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{ThreeCompFirstOrderAbsOneCompMetab}}
@@ -240,8 +240,8 @@ TwoCompFirstOrderAbsOneCompMetab <- function(inputDataFrame){
 #'
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompFirstOrderAbsOneCompMetab)}
 #'
-#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regimens and can account for covariate structures; however,
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompFirstOrderAbsOneCompMetab}}, \code{\link{TwoCompFirstOrderAbsOneCompMetab}}
