@@ -32,7 +32,7 @@
 #' \code{ddply(inputDataFrame, .(ID), TwoCompOneTransit)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompTwoTransit}}, \code{\link{TwoCompThreeTransit}}, \code{\link{TwoCompFourTransit}}
@@ -120,7 +120,7 @@ TwoCompOneTransit <- function(inputDataFrame){
 #' \code{ddply(inputDataFrame, .(ID), TwoCompTwoTransit)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompOneTransit}}, \code{\link{TwoCompThreeTransit}}, \code{\link{TwoCompFourTransit}}
@@ -210,7 +210,7 @@ TwoCompTwoTransit <- function(inputDataFrame){
 #' \code{ddply(inputDataFrame, .(ID), TwoCompThreeTransit)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompOneTransit}}, \code{\link{TwoCompTwoTransit}}, \code{\link{TwoCompFourTransit}}
@@ -302,7 +302,7 @@ TwoCompThreeTransit <- function(inputDataFrame){
 #' \code{ddply(inputDataFrame, .(ID), TwoCompFourTransit)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompOneTransit}}, \code{\link{TwoCompTwoTransit}}, \code{\link{TwoCompFourTransit}}

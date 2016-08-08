@@ -32,7 +32,7 @@
 #' \code{ddply(inputDataFrame, .(ID), OneCompIVbolusOneCompMetab)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{TwoCompIVbolusOneCompMetab}}, \code{\link{ThreeCompIVbolusOneCompMetab}}
@@ -124,7 +124,7 @@ OneCompIVbolusOneCompMetab    <- function(inputDataFrame){
 #' \code{ddply(inputDataFrame, .(ID), TwoCompIVbolusOneCompMetab)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompIVbolusOneCompMetab}}, \code{\link{ThreeCompIVbolusOneCompMetab}}
@@ -223,7 +223,7 @@ TwoCompIVbolusOneCompMetab <- function(inputDataFrame){
 #' \code{ddply(inputDataFrame, .(ID), ThreeCompIVbolusOneCompMetab)}
 #'
 #' The \pkg{PKADVAN} function is capable of simulating arbitrary dosing regemins and can account for covariate structures; however,
-#' covariate effects on respective parameters must be calculated prior porocessing simulations.
+#' covariate effects on respective parameters must be calculated prior processing simulations.
 #' See examples below for more details.
 #'
 #' @seealso \code{\link{OneCompIVbolusOneCompMetab}}, \code{\link{TwoCompIVbolusOneCompMetab}}
