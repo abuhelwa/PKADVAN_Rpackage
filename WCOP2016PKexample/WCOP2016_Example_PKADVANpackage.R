@@ -571,20 +571,26 @@ simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion)
 #=======================================================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
-dosetimes <- c(seq(0,24,12))
-tlast <- 48
+dosetimes <- c(seq(0,48,12))
+tlast <- 96
+
+#Now define finer sample times for after a dose to capture Cmax
+doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
+
+#Use the outer product but with addition to expand this doseseq for all dosetimes
+PKtimes <- outer(dosetimes,doseseq,"+")
 
 #set number of subjects
-nsub <- 1000
+nsub <- 2000
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
-df$CLCR[df$ID <= 0.5*nsub] <- 70
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
+df$CLCR[df$ID <= 0.5*nsub] <- 120
 
 doserows <- subset(df, TIME%in%dosetimes)
 
-#Dose = 100 mg. It can be any arbitrary dose
+#Dose: It can be any arbitrary dose
 doserows$AMT <- 500
 doserows$MDV <- 1
 
@@ -592,6 +598,95 @@ doserows$MDV <- 1
 df <- rbind(df,doserows)
 df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
+
+#----------------------------------------------------------------------------------------------------
+# 1 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
+#----------------------------------------------------------------------------------------------------
+#Define between subject variability (BSV)
+#Use random number generator to simulate residuals from a normal distribution
+#Parent BSV
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.07)  #BSV on CL-parent
+BSVV  <- rnorm(nsub, mean = 0, sd = 0.12)  #BSV on V-parent
+BSVF1 <- rnorm(nsub, mean=0, sd = 0.12)
+
+#Metabolite BSV
+BSVCLM <- rnorm(nsub, mean = 0, sd = 0.08)  #BSV on CL-metabolite
+BSVVM  <- rnorm(nsub, mean = 0, sd = 0.13)  #BSV on VM-metabolite
+
+#Define residual error model
+RESEDUAL 	<- rnorm(nsub, mean = 0, sd = 0.15)  #parent
+RESEDUALMET <- rnorm(nsub, mean = 0, sd = 0.05) #metabolite
+
+#Set population PK parameters for 3-compartment parent model
+CLpop <- 0.5          # clearance
+Vpop <-  20         # central volume of distribution
+KApop <- 1.36        # first-order absorption rate constant
+F1pop <- 1          # bioavailability
+
+#Set population parameters for 1-compartment metabolite model
+CLpopMet <- 0.8        # Clearance of the metabolite
+VpopMet  <- 7       # Volume of distribution of th metabolite
+
+#Set fraction of parent drug converted into the metabolite
+FR = 0.65
+
+#Modify df for ADVAN calculation and include any covariates on PK parameters
+dfadvan <- df
+dfadvan$FR <- FR
+#Calculate group parameter values including any covariate effects
+dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
+dfadvan$V  <- V2pop*exp(BSVV)
+dfadvan$KA <- KApop
+dfadvan$F1 <- F1pop*exp(BSVF1)
+dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
+dfadvan$VM <- VpopMet*exp(BSVVM)
+
+#Apply PKADVAN function to each ID in df
+simdf <- ddply(dfadvan, .(ID), OneCompFirstOrderAbsOneCompMetab)
+head(simdf)
+
+#Add residual unexplained variability (within subject variability)
+#For example; Additive error model
+simdf$DVP <- simdf$IPREDP+RESEDUAL
+simdf$DVM <- simdf$IPREDM+RESEDUALMET
+
+#PLOTTING
+# SUBSET mdv==0
+simdf <- subset(simdf, MDV==0)
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#plotobj2 <- plotobj + scale_y_log10("Concentration\n")
+#plotobj2
+
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),geom="ribbon",fill="red", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
 
 #----------------------------------------------------------------------------------------------------
 # 2 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
