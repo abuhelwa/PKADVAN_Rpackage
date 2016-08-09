@@ -594,9 +594,93 @@ df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) an
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #----------------------------------------------------------------------------------------------------
+# 2 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
+#----------------------------------------------------------------------------------------------------
+#Define between subject variability (BSV)
+#Use random number generator to simulate residuals from a normal distribution
+#Parent BSV
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-parent
+BSVV2  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-parent
+
+#Metabolite BSV
+BSVCLM <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-metabolite
+
+
+#Define residual error model
+PROP 	<- rnorm(nsub, mean = 0, sd = 0.2) #parent
+PROPMET <- rnorm(nsub, mean = 0, sd = 0.15) #metabolite
+
+#Set population PK parameters for 3-compartment parent model
+CLpop <- 0.5          # clearance
+V2pop <- 20         # central volume of distribution
+Q3pop <- 0.5        # inter-compartmental clearance (1)
+V3pop <- 30         # peripheral volume of distribution (1)
+KApop <- 0.4        # first-order absorption rate constant
+F1pop <- 1          # bioavailability
+
+#Set population parameters for 1-compartment metabolite model
+CLpopMet <- 1        # Clearance of the metabolite
+VpopMet  <- 15       # Volume of distribution of th metabolite
+
+#Set fraction of parent drug converted into the metabolite
+FR = 0.85
+
+#Modify df for ADVAN calculation and include any covariates on PK parameters
+dfadvan <- df
+dfadvan$FR <- FR
+#Calculate group parameter values including any covariate effects
+dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
+dfadvan$V2 <- V2pop*exp(BSVV2)
+dfadvan$Q3 <- Q3pop
+dfadvan$V3 <- V3pop
+dfadvan$KA <- KApop
+dfadvan$F1 <- F1pop
+dfadvan$CLM <- CLpopMet**exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
+dfadvan$VM <- VpopMet
+
+#Apply PKADVAN function to each ID in df
+simdf <- ddply(dfadvan, .(ID), TwoCompFirstOrderAbsOneCompMetab)
+head(simdf)
+tail(simdf)
+
+#Add residual unexplained variability (within subject variability)
+#For example; proportional error model
+simdf$DVP <- simdf$IPREDP*(1+PROP)
+simdf$DVM <- simdf$IPREDM*(1+PROPMET)
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),geom="ribbon",fill="red", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#----------------------------------------------------------------------------------------------------
 # 3 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
 #----------------------------------------------------------------------------------------------------
-# This example is an allustration on the possibility to extend ADVA-style equations to parent-metabolite models
 #Define between subject variability (BSV)
 #Use random number generator to simulate residuals from a normal distribution
 #Parent BSV
@@ -653,6 +737,20 @@ tail(simdf)
 simdf$DVP <- simdf$IPREDP*(1+PROP)
 simdf$DVM <- simdf$IPREDM*(1+PROPMET)
 
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('Simulated Drug Concentrations',
+                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
+                             )))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
 
 #DV
 plotobj <- NULL
@@ -669,28 +767,13 @@ plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
-#IPRED
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations',
-                             atop(italic("Red line is the median. Gray band is the 90% confidence interval")
-                             )))
-plotobj <- ggplot(data=simdf)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="line", colour="red", size=1)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
-
 #===========================================================================================
 #                     infusion first-order formation Metabolite models
 #===========================================================================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 #number of subjects
-nsub <- 10000
+nsub <- 2000
 ID <- 1:nsub
 
 tlast <- 72
@@ -706,7 +789,7 @@ df$CLCR[df$ID>=0.5*nsub] <- 70
 doserowssim <- subset(df, TIME%in%dosetimessim)
 
 #Dose & RATE can be arbitrary
-doserowssim$AMT  <- 100
+doserowssim$AMT  <- 120
 doserowssim$RATE <- 4
 doserowssim$MDV  <- 1
 
@@ -716,9 +799,8 @@ df <- df[order(df$TIME,-df$AMT),]       # arrange df by TIME with the AMT from h
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #---------------------------------------------------------------
-# 3 compartment-IV infusion with 1-compartment metabolite model via PKADVAN package
+# 1 compartment-IV infusion with 1-compartment metabolite model via PKADVAN package
 #---------------------------------------------------------------
-# This example is an allustration on the possibility to extend ADVA-style equations to parent-metabolite models
 #Define between subject variability (BSV)
 #Use random number generator to simulate residuals from a normal distribution
 #Parent BSV
@@ -730,19 +812,15 @@ BSVCLM <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-metabolite
 BSVVM  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-metabolite
 
 #Define residual error model
-PROP 	<- rnorm(nsub, mean = 0, sd = 0.2) #parent
-PROPMET <- rnorm(nsub, mean = 0, sd = 0.15) #metabolite
+RESEDUAL 	<- rnorm(nsub, mean = 0, sd = 0.15)  #parent
+RESEDUALMET <- rnorm(nsub, mean = 0, sd = 0.05) #metabolite
 
 # Set population PK parameters for parent 3-compartment model
-CLpop  <- 2          # clearance
-V1pop  <- 10         # central volume of distribution
-Q2pop <- 0.5        # inter-compartmental clearance (1)
-V2pop  <- 30         # peripheral volume of distribution (1)
-Q3pop <- 0.3        # inter-compartmental clearance (2)
-V3pop  <- 40         # peripheral volume of distribution (2)
+CLpop  <- 1.5          # clearance
+Vpop  <- 10         # central volume of distribution
 
 #Set population parameters for 1-compartment metabolite model
-CLpopMet <- 3        # Clearance of the metabolite
+CLpopMet <- 2.5        # Clearance of the metabolite
 VpopMet  <- 20       # Volume of distribution of th metabolite
 
 #Set fraction of parent drug converted into the metabolite
@@ -753,31 +831,62 @@ dfadvan <- df
 dfadvan$FR <- FR
 #Calculate group parameter values including any covariate effects
 dfadvan$CL  <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
-dfadvan$V1  <- V1pop*exp(BSVV)
-dfadvan$Q2 <-  Q2pop
-dfadvan$V2  <- V2pop
-dfadvan$Q3 <-  Q3pop
-dfadvan$V3  <- V3pop
+dfadvan$V   <- Vpop*exp(BSVV)
 dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100)
 dfadvan$VM <- VpopMet*exp(BSVVM)
 
 #Apply the ADVAN function for each ID in df
-simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusionOneCompMetab)
+simdf <- ddply(dfadvan, .(ID), OneCompIVinfusionOneCompMetab)
 head(simdf)
 tail(simdf)
 
+library(dplyr)
+library(scales)
+library(tidyr)
+df <- simdf %>% gather(DVID, IPRED, IPREDP:IPREDM) %>% mutate(DVID = as.integer(factor(DVID, levels = c('IPREDP', 'IPREDM'))))
+
 #Add residual unexplained variability (within subject variability)
-#For example; proportional error model
-simdf$DVP <- simdf$IPREDP*(1+PROP)
-simdf$DVM <- simdf$IPREDM*(1+PROPMET)
+#For example; Additive error model
+simdf$DVP <- simdf$IPREDP+RESEDUAL
+simdf$DVM <- simdf$IPREDM+RESEDUALMET
 
 #plotting
 #Subset MDV==0
 simdf <- subset(simdf, MDV==0)
 
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('One compartment multiple IV infusion administration',
+                             atop(italic("with discrete changes in creatinine clearance covariate values on parent systemic clearance"),
+                                  italic("One compartment first-order formation for the metabolite"))))
+plotobj <- ggplot(data=df)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj <- plotobj + facet_wrap(~DVID)
+plotobj
+
+
+#IPRED
+plotobj <- NULL
+titletext <- expression(atop('One compartment multiple IV infusion administration',
+                             atop(italic("with discrete changes in creatinine clearance covariate values on parent systemic clearance"),
+                                  italic("One compartment first-order formation for the metabolite"))))
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
 #DV
 plotobj <- NULL
-titletext <- expression(atop('Three compartment multiple IV infusion administration',
+titletext <- expression(atop('One compartment multiple IV infusion administration',
                              atop(italic("with discrete changes in creatinine clearance covariate values on parent systemic clearance"),
                                   italic("One compartment first-order formation for the metabolite"))))
 
@@ -791,9 +900,65 @@ plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
+#---------------------------------------------------------------
+# 2 compartment-IV infusion with 1-compartment metabolite model via PKADVAN package
+#---------------------------------------------------------------
+#Define between subject variability (BSV)
+#Use random number generator to simulate residuals from a normal distribution
+#Parent BSV
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-parent
+BSVV  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-parent
+
+#Metabolite BSV
+BSVCLM <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-metabolite
+BSVVM  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-metabolite
+
+#Define residual error model
+RESEDUAL 	<- rnorm(nsub, mean = 0, sd = 0.2)  #parent
+RESEDUALMET <- rnorm(nsub, mean = 0, sd = 0.10) #metabolite
+
+# Set population PK parameters for parent 3-compartment model
+CLpop  <- 1.5          # clearance
+V1pop  <- 10         # central volume of distribution
+Q2pop <- 0.5        # inter-compartmental clearance (1)
+V2pop  <- 30         # peripheral volume of distribution (1)
+
+#Set population parameters for 1-compartment metabolite model
+CLpopMet <- 2.5        # Clearance of the metabolite
+VpopMet  <- 20       # Volume of distribution of th metabolite
+
+#Set fraction of parent drug converted into the metabolite
+FR = 0.75
+
+#Modify df for ADVAN calculation and include any covariates on PK parameters
+dfadvan <- df
+dfadvan$FR <- FR
+#Calculate group parameter values including any covariate effects
+dfadvan$CL  <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
+dfadvan$V1  <- V1pop*exp(BSVV)
+dfadvan$Q2 <-  Q2pop
+dfadvan$V2  <- V2pop
+dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100)
+dfadvan$VM <- VpopMet*exp(BSVVM)
+
+#Apply the ADVAN function for each ID in df
+simdf <- ddply(dfadvan, .(ID), TwoCompIVinfusionOneCompMetab)
+head(simdf)
+tail(simdf)
+
+#Add residual unexplained variability (within subject variability)
+#For example; Additive error model
+simdf$DVP <- simdf$IPREDP+RESEDUAL
+simdf$DVM <- simdf$IPREDM+RESEDUALMET
+
+
+#plotting
+#Subset MDV==0
+simdf <- subset(simdf, MDV==0)
+
 #IPRED
 plotobj <- NULL
-titletext <- expression(atop('Three compartment multiple IV infusion administration',
+titletext <- expression(atop('Two compartment multiple IV infusion administration',
                              atop(italic("with discrete changes in creatinine clearance covariate values on parent systemic clearance"),
                                   italic("One compartment first-order formation for the metabolite"))))
 plotobj <- ggplot(data=simdf)
@@ -801,6 +966,22 @@ plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),fun.y=median, geom="lin
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),fun.y=median, geom="line", colour="black", size=1)
 plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPREDM),geom="ribbon", fill="red",fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + ggtitle(titletext)
+plotobj <- plotobj + scale_y_continuous("Concentration\n")
+plotobj <- plotobj + scale_x_continuous("\nTime after dose")
+plotobj
+
+#DV
+plotobj <- NULL
+titletext <- expression(atop('Two compartment multiple IV infusion administration',
+                             atop(italic("with discrete changes in creatinine clearance covariate values on parent systemic clearance"),
+                                  italic("One compartment first-order formation for the metabolite"))))
+
+plotobj <- ggplot(data=simdf)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),fun.y=median, geom="line", colour="red", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVP),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),fun.y=median, geom="line", colour="black", size=1)
+plotobj <- plotobj + stat_summary(aes(x=TIME, y= DVM),geom="ribbon",fill="red", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
 plotobj <- plotobj + ggtitle(titletext)
 plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
