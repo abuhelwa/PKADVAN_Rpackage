@@ -581,12 +581,12 @@ doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
 PKtimes <- outer(dosetimes,doseseq,"+")
 
 #set number of subjects
-nsub <- 2000
+nsub <- 1
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
-df$CLCR[df$ID <= 0.5*nsub] <- 120
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=120)
+df$CLCR[df$TIME <= 48] <- 90
 
 doserows <- subset(df, TIME%in%dosetimes)
 
@@ -598,6 +598,8 @@ doserows$MDV <- 1
 df <- rbind(df,doserows)
 df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
+
+write.csv(df, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote= F, na=".")
 
 #----------------------------------------------------------------------------------------------------
 # 1 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
