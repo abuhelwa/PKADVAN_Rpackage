@@ -130,7 +130,7 @@ dfadvan <- df
 dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
 dfadvan$V  <- Vpop
 
-#------------------------
+#-----------------------
 # Apply PKADVAN function
 #-----------------------
 simdf <- ddply(dfadvan, .(ID), OneCompIVbolus)
