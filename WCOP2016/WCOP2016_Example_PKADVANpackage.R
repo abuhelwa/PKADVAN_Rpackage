@@ -1,4 +1,4 @@
-#Test PK examples script for PKADVAN functions
+#WCOP2016 PK example using PKADVAN package
 rm(list=ls(all=TRUE))
 graphics.off()
 
@@ -30,53 +30,6 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 # 1.  Generate a simulation data frame with the individual PK parameters and include any covariate effects on the PK parameters.
 # 2.  Run the "PKADVAN" function for the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
 # 3.  Add residul un-explained variability to the IPREDs.
-
-
-###################################################
-#The "PKADVAN" package contains the following models
-#Basic Pharmacokinetic Models:
-    # 1.  Iv bolus models
-        # a.  1comp IV bolus
-        # b.  2comp IV bolus
-        # c.  3comp IV bolus
-
-    # 2.  IV infusion models
-        # a.  1comp IV infusion
-        # b.  2comp IV infusion
-        # c.  3comp IV infusion
-
-    # 3.  First order absorption models
-        # a.  1comp first-order absorption
-        # b.  2comp first-order absorption
-        # c.  3comp first-order absorption
-
-#Transit Absorption Models:
-    # 1. One compartment first-order absorption transit models:
-        # a.  1comp-1-transit
-        # b.  1comp-2-transit
-        # c.  1comp-3-transit
-        # d.  1comp-4-transit
-    # 2. Two-compartment first order absorption tansit models:
-        # a.  2comp-1-transit
-        # b.  2comp-2-transit
-        # c.  2comp-3-transit
-        # d.  2comp-4-transit
-
-#First-order Formation Metabolite models
-    # 1. IV bolus metabolite models
-        # a.  1comp IV bolus-1comp metabolite
-        # b.  2comp IV bolus-1comp metabolite
-        # c.  3comp IV bolus-1comp metabolite
-
-    # 2. IV infusion metabolite models
-        # a.  1comp IV infusion-1comp metabolite
-        # b.  2comp IV infusion-1comp metabolite
-        # c.  3comp IV infusion-1comp metabolite
-
-    # 3. First-order absorption metabolite models
-        # a.  1comp first-oredr absorption-1comp metabolite
-        # b.  2comp first-oredr absorption-1comp metabolite
-        # c.  3comp first-oredr absorption-1comp metabolite
 
 ######################################################################
 ########      Basic Pharmacokinetic models    ########################
