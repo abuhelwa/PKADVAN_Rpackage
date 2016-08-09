@@ -1,4 +1,4 @@
-#WCOP2016 PK example using PKADVAN package
+#WCOP2016 simulation PK example using PKADVAN package
 rm(list=ls(all=TRUE))
 graphics.off()
 
@@ -31,19 +31,16 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 # 2.  Run the "PKADVAN" function for the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
 # 3.  Add residul un-explained variability to the IPREDs.
 
-######################################################################
-########      Basic Pharmacokinetic models    ########################
-######################################################################
-# 1.  Iv bolus models (1,2, and 3 compartment models)
-# 2.  IV infusion models (1,2, and 3 compartment models)
-# 3.  First order absorption models(1,2, and 3 compartment models)
+#########################################################################################
+########      One compartment IV bolus with 1 comp metabolite    ########################
+#########################################################################################
 
-#====================
-# IV bolus Models
-#====================
+#================================
+# Generate simulation data frame
+#================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
-dosetimes <- c(seq(0,72,4))
+dosetimes <- c(seq(0,48,24))
 tlast <- 96
 #set number of subjects
 nsub <- 1000
@@ -69,19 +66,20 @@ df <- subset(df, (TIME==0 & AMT==0)==FALSE)      # remove the row that has a TIM
 #Define between subject variability (BSV)
 #Use random number generator to simulate residuals from a normal distribution
 BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
+BSVV  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V
 
 #Define residual error model
 PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
 
 #Define population PK parameters for 1-compartment model
-CLpop <- 2       # clearance
-Vpop  <- 10      # central volume of distribution
+CLpop <- 0.2       # clearance
+Vpop  <- 5      # central volume of distribution
 
 #Modify df for ADVAN calculation and include any covariate effects on the PK parameters
 dfadvan <- df
 #Calculate group parameter values including any covariate effects
 dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
-dfadvan$V  <- Vpop
+dfadvan$V  <- Vpop*exp(BSVV)
 
 #-----------------------
 # Apply PKADVAN function
@@ -225,7 +223,7 @@ BSVF1 <- rnorm(nsub, mean = 0, sd = 0.2)  #BSV on F
 PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
 
 #Define population PK parameters for 1-compartment model
-CLpop <- 2       # clearance
+CLpop <- 0.5       # clearance
 Vpop  <- 10      # central volume of distribution
 KApop <- 0.4     # first-order absorption rate constant
 F1pop <- 1       # bioavailability
@@ -292,7 +290,7 @@ BSVF1 <- rnorm(nsub, mean = 0, sd = 0.2)  #BSV on F
 PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
 
 #Set population PK parameters for 2-compartment model
-CLpop <- 2       # clearance
+CLpop  <- 0.5       # clearance
 V2pop  <- 10     # central volume of distribution
 Qpop  <- 1       # inter-compartmental clearance
 V3pop <- 25      # peripheral volume of distribution
@@ -364,8 +362,8 @@ BSVF1 <- rnorm(nsub, mean = 0, sd = 0.2)  #BSV on F
 PROP 	<- rnorm(nsub, mean = 0, sd = 0.22)
 
 #Set population PK parameters for 3-compartment model
-CLpop <- 2          # clearance
-V2pop <- 10         # central volume of distribution
+CLpop <- 0.5        # clearance
+V2pop <- 20          # central volume of distribution
 Q3pop <- 0.5        # inter-compartmental clearance (1)
 V3pop <- 30         # peripheral volume of distribution (1)
 Q4pop <- 0.3        # inter-compartmental clearance (2)
@@ -568,256 +566,6 @@ dfadvan$V3  <- V3pop
 simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion)
 #system.time(simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion))
 
-#===========================
-# Transit Absorption Models
-#===========================
-#Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
-#Set dose records:
-dosetimes <- c(0)
-tlast <- 36
-
-#Now define finer sample times for after a dose to capture Cmax
-doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
-
-#Use the outer product but with addition to expand this doseseq for all dosetimes
-PKtimes <- outer(dosetimes,doseseq,"+")
-
-#set number of subjects
-nsub <- 1000
-ID <- 1:nsub
-
-#Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
-df$CLCR[df$ID <= 0.5*nsub] <- 70
-
-doserows <- subset(df, TIME%in%dosetimes)
-
-#Dose = 100 mg. It can be any arbitrary dose
-doserows$AMT <- 100000 #ng
-doserows$MDV <- 1
-
-#Add back dose information
-df <- rbind(df,doserows)
-df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
-df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
-
-#----------------------------------------------------------------
-# 1 compartment-1-transit  via PKADVAN package
-#----------------------------------------------------------------
-#Define between subject variability (BSV)
-#Use random number generator to simulate residuals from a normal distribution
-BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
-BSVV2  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V
-
-#Define residual error model
-PROP 	<- rnorm(nsub, mean = 0, sd = 0.2)
-
-#Set population PK parameters for 2-compartment model
-CLpop  <- 129       # clearance
-V2pop  <- 861       # central volume of distribution
-KTRpop <- 0.95      # first-order absorption rate constant
-F1pop <- 0.75       # bioavailability
-
-#Modify df for ADVAN calculation and include any covariates on PK parameters
-dfadvan <- df
-#Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
-dfadvan$V2 <- V2pop*exp(BSVV2)
-dfadvan$KTR <- KTRpop
-dfadvan$F1 <- F1pop
-
-#Apply the ADVAN function
-simdf1 <- ddply(dfadvan, .(ID), OneCompOneTransit)
-simdf1$TRANSIT <- "1-transit"
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf1$DV <- simdf1$IPRED*(1+PROP)
-
-#----------------------------------------------------------------
-# 1 compartment-2-transit  via PKADVAN package
-#----------------------------------------------------------------
-simdf2 <- ddply(dfadvan, .(ID), OneCompTwoTransit)
-simdf2$TRANSIT <- "2-transit"
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf2$DV <- simdf2$IPRED*(1+PROP)
-#----------------------------------------------------------------
-# 1 compartment-3-transit  via PKADVAN package
-#----------------------------------------------------------------
-simdf3 <- ddply(dfadvan, .(ID), OneCompThreeTransit)
-simdf3$TRANSIT <- "3-transit"
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf3$DV <- simdf3$IPRED*(1+PROP)
-#----------------------------------------------------------------
-# 1 compartment-4-transit  via PKADVAN package
-#----------------------------------------------------------------
-simdf4 <- ddply(dfadvan, .(ID), OneCompFourTransit)
-simdf4$TRANSIT <- "4-transit"
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf4$DV <- simdf4$IPRED*(1+PROP)
-
-#Plot all!
-simdf1 <- subset(simdf1, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf2 <- subset(simdf2, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf3 <- subset(simdf3, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf4 <- subset(simdf4, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-
-simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
-
-#plotting
-#subset MDV==0
-simdfall <- subset(simdfall, MDV==0)
-
-#IPRED
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations'))
-plotobj <- ggplot(data=simdfall)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED,colour=TRANSIT),fun.y=median, geom="line",  size=1)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
-
-plotobj <- plotobj + facet_wrap(~TRANSIT)
-plotobj
-
-#DV
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations'))
-plotobj <- ggplot(data=simdfall)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV,colour=TRANSIT),fun.y=median, geom="line",  size=1)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
-
-plotobj <- plotobj + facet_wrap(~TRANSIT)
-plotobj
-#system.time(simdf <- ddply(dfadvan, .(ID), OneCompOneTransit))
-#system.time(simdf <- ddply(dfadvan, .(ID), OneCompTwoTransit))
-#system.time(simdf <- ddply(dfadvan, .(ID), OneCompThreeTransit))
-#system.time(simdf <- ddply(dfadvan, .(ID), OneCompFourTransit))
-
-#----------------------------------------------------------------
-# 2 compartment-1-transit  via PKADVAN package
-#----------------------------------------------------------------
-#Define between subject variability (BSV)
-#Use random number generator to simulate residuals from a normal distribution
-BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
-BSVV2  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V
-
-#Define residual error model
-PROP 	<- rnorm(nsub, mean = 0, sd = 0.2)
-
-#Set population PK parameters for 2-compartment model
-CLpop  <- 129       # clearance
-V2pop  <- 861     # central volume of distribution
-Qpop  <- 153       # inter-compartmental clearance
-V3pop <- 2340      # peripheral volume of distribution
-KTRpop <- 2.05     # first-order absorption rate constant
-F1pop <- 0.75       # bioavailability
-
-#Modify df for ADVAN calculation and include any covariates on PK parameters
-dfadvan <- df
-#Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
-dfadvan$V2 <- V2pop*exp(BSVV2)
-dfadvan$Q  <- Qpop
-dfadvan$V3 <- V3pop
-dfadvan$KTR <- KTRpop
-dfadvan$F1 <- F1pop
-
-#Apply PKADVAN functions
-simdf1 <- ddply(dfadvan, .(ID), TwoCompOneTransit)
-simdf1$TRANSIT <- "1-transit"
-head(simdf)
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf1$DV <- simdf1$IPRED*(1+PROP)
-
-#------------------------
-# 2 compartment-2-transit
-#------------------------
-simdf2 <- ddply(dfadvan, .(ID), TwoCompTwoTransit)
-simdf2$TRANSIT <- "2-transit"
-head(simdf)
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf2$DV <- simdf2$IPRED*(1+PROP)
-
-#------------------------
-# 2 compartment-3-transit
-#------------------------
-simdf3 <- ddply(dfadvan, .(ID), TwoCompThreeTransit)
-simdf3$TRANSIT <- "3-transit"
-head(simdf)
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf3$DV <- simdf3$IPRED*(1+PROP)
-
-#------------------------
-# 2 compartment-4-transit
-#------------------------
-simdf4 <- ddply(dfadvan, .(ID), TwoCompFourTransit)
-simdf4$TRANSIT <- "4-transit"
-head(simdf)
-
-#Add residual unexplained variability (within subject variability)
-#For example; additive error model
-simdf4$DV <- simdf4$IPRED*(1+PROP)
-
-#Plot all!
-simdf1 <- subset(simdf1, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf2 <- subset(simdf2, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf3 <- subset(simdf3, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-simdf4 <- subset(simdf4, select = c(ID,TIME,MDV,IPRED,DV,TRANSIT))
-
-simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
-
-#ploting
-#subet MDV==0
-simdfall <- subset(MDV==0)
-
-#IPRED
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations'))
-plotobj <- ggplot(data=simdfall)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED,colour=TRANSIT),fun.y=median, geom="line",  size=1)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
-
-plotobj <- plotobj + facet_wrap(~TRANSIT)
-plotobj
-
-#DV
-plotobj <- NULL
-titletext <- expression(atop('Simulated Drug Concentrations'))
-plotobj <- ggplot(data=simdfall)
-plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV,colour=TRANSIT),fun.y=median, geom="line",  size=1)
-plotobj <- plotobj + ggtitle(titletext)
-plotobj <- plotobj + scale_y_continuous("Concentration\n")
-plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-plotobj
-
-plotobj <- plotobj + facet_wrap(~TRANSIT)
-plotobj
-
-#system.time(simdf <- ddply(dfadvan, .(ID), TwoCompOneTransit))
-#system.time(simdf <- ddply(dfadvan, .(ID), TwoCompTwoTransit))
-#system.time(simdf <- ddply(dfadvan, .(ID), TwoCompThreeTransit))
-#ystem.time(simdf <- ddply(dfadvan, .(ID), TwoCompFourTransit))
-
 #=======================================================================
 #   First-order absorption first-order metabolite formation models
 #=======================================================================
@@ -864,8 +612,8 @@ PROP 	<- rnorm(nsub, mean = 0, sd = 0.2) #parent
 PROPMET <- rnorm(nsub, mean = 0, sd = 0.15) #metabolite
 
 #Set population PK parameters for 3-compartment parent model
-CLpop <- 2          # clearance
-V2pop <- 10         # central volume of distribution
+CLpop <- 0.5          # clearance
+V2pop <- 20         # central volume of distribution
 Q3pop <- 0.5        # inter-compartmental clearance (1)
 V3pop <- 30         # peripheral volume of distribution (1)
 Q4pop <- 0.3        # inter-compartmental clearance (2)
@@ -874,8 +622,8 @@ KApop <- 0.4        # first-order absorption rate constant
 F1pop <- 1          # bioavailability
 
 #Set population parameters for 1-compartment metabolite model
-CLpopMet <- 3        # Clearance of the metabolite
-VpopMet  <- 10       # Volume of distribution of th metabolite
+CLpopMet <- 1        # Clearance of the metabolite
+VpopMet  <- 15       # Volume of distribution of th metabolite
 
 #Set fraction of parent drug converted into the metabolite
 FR = 0.85
@@ -936,14 +684,13 @@ plotobj <- plotobj + scale_y_continuous("Concentration\n")
 plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 plotobj
 
-
 #===========================================================================================
 #                     infusion first-order formation Metabolite models
 #===========================================================================================
 #Generate data frame: (if you havea a NONMEM df ready then just read and apply function)
 #Set dose records:
 #number of subjects
-nsub <- 1000
+nsub <- 10000
 ID <- 1:nsub
 
 tlast <- 72
@@ -951,7 +698,7 @@ tlast <- 72
 dosetimessim <- c(0,20.5)
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimessim))),"AMT"=0,"RATE"=0,"CLCR"=90)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimessim))),"AMT"=0,"RATE"=0,"CLCR"=90,"MDV"=0)
 
 df$CLCR[df$ID>=0.5*nsub] <- 70
 
@@ -961,6 +708,7 @@ doserowssim <- subset(df, TIME%in%dosetimessim)
 #Dose & RATE can be arbitrary
 doserowssim$AMT  <- 100
 doserowssim$RATE <- 4
+doserowssim$MDV  <- 1
 
 #Add back dose information
 df <- rbind(df,doserowssim)
@@ -979,7 +727,7 @@ BSVV  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-parent
 
 #Metabolite BSV
 BSVCLM <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-metabolite
-
+BSVVM  <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on V-metabolite
 
 #Define residual error model
 PROP 	<- rnorm(nsub, mean = 0, sd = 0.2) #parent
@@ -1005,13 +753,13 @@ dfadvan <- df
 dfadvan$FR <- FR
 #Calculate group parameter values including any covariate effects
 dfadvan$CL  <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
-dfadvan$V1  <- V1pop#*exp(BSVV)
+dfadvan$V1  <- V1pop*exp(BSVV)
 dfadvan$Q2 <-  Q2pop
 dfadvan$V2  <- V2pop
 dfadvan$Q3 <-  Q3pop
 dfadvan$V3  <- V3pop
 dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100)
-dfadvan$VM <- VpopMet
+dfadvan$VM <- VpopMet*exp(BSVVM)
 
 #Apply the ADVAN function for each ID in df
 simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusionOneCompMetab)
@@ -1023,6 +771,9 @@ tail(simdf)
 simdf$DVP <- simdf$IPREDP*(1+PROP)
 simdf$DVM <- simdf$IPREDM*(1+PROPMET)
 
+#plotting
+#Subset MDV==0
+simdf <- subset(simdf, MDV==0)
 
 #DV
 plotobj <- NULL
