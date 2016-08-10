@@ -6,7 +6,7 @@ library(PKADVAN)
 library(plyr)
 library(doBy)
 library(ggplot2)
-
+library(data.table)
 #--------------------------------------------------------------
 #Customize ggplot2 theme - R 2.15.3
 theme_bw2 <- theme_set(theme_bw(base_size = 20))
@@ -585,7 +585,7 @@ nsub <- 1
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"CLCR"=120)
+df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"DV"=NA,"CLCR"=120)
 df$CLCR[df$TIME <= 48] <- 90
 
 doserows <- subset(df, TIME%in%dosetimes)
@@ -599,7 +599,12 @@ df <- rbind(df,doserows)
 df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
-write.csv(df, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote= F, na=".")
+#make df for NONEM
+dfnm1 <- df
+
+#setnames(dfnm,"ID","CID")
+
+#write.csv(dfnm, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote= F, na=".")
 
 #----------------------------------------------------------------------------------------------------
 # 1 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
@@ -607,17 +612,18 @@ write.csv(df, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote=
 #Define between subject variability (BSV)
 #Use random number generator to simulate residuals from a normal distribution
 #Parent BSV
-BSVCL <- rnorm(nsub, mean = 0, sd = 0.07)  #BSV on CL-parent
+BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL-parent
 BSVV  <- rnorm(nsub, mean = 0, sd = 0.12)  #BSV on V-parent
-BSVF1 <- rnorm(nsub, mean=0, sd = 0.12)
+BSVKA <- rnorm(nsub, mean=0, sd = 0.14)
+BSVF1 <- rnorm(nsub, mean=0, sd = 0.05)
 
 #Metabolite BSV
-BSVCLM <- rnorm(nsub, mean = 0, sd = 0.08)  #BSV on CL-metabolite
+BSVCLM <- rnorm(nsub, mean = 0, sd = 0.30)  #BSV on CL-metabolite
 BSVVM  <- rnorm(nsub, mean = 0, sd = 0.13)  #BSV on VM-metabolite
 
 #Define residual error model
 RESEDUAL 	<- rnorm(nsub, mean = 0, sd = 0.15)  #parent
-RESEDUALMET <- rnorm(nsub, mean = 0, sd = 0.05) #metabolite
+RESEDUALMET <- rnorm(nsub, mean = 0, sd = 0.20) #metabolite
 
 #Set population PK parameters for 3-compartment parent model
 CLpop <- 0.5          # clearance
@@ -630,7 +636,7 @@ CLpopMet <- 0.8        # Clearance of the metabolite
 VpopMet  <- 7       # Volume of distribution of th metabolite
 
 #Set fraction of parent drug converted into the metabolite
-FR = 0.65
+FR = 0.60
 
 #Modify df for ADVAN calculation and include any covariates on PK parameters
 dfadvan <- df
@@ -638,7 +644,7 @@ dfadvan$FR <- FR
 #Calculate group parameter values including any covariate effects
 dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
 dfadvan$V  <- V2pop*exp(BSVV)
-dfadvan$KA <- KApop
+dfadvan$KA <- KApop*exp(BSVKA)
 dfadvan$F1 <- F1pop*exp(BSVF1)
 dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
 dfadvan$VM <- VpopMet*exp(BSVVM)
