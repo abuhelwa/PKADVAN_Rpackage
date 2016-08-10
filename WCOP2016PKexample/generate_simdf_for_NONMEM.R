@@ -18,19 +18,26 @@ nsub <- 1
 ID <- 1:nsub
 
 #Make dataframe
-df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"DV"=NA,"CLCR"=120)
+df <- expand.grid("CID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"DV"=NA,"CLCR"=120,"DVID"=1)
 df$CLCR[df$TIME <= 48] <- 90
 
 doserows <- subset(df, TIME%in%dosetimes)
 
 #Dose: It can be any arbitrary dose
-doserows$AMT <- 500
+doserows$AMT[doserows$DVID==1] <- 500
 doserows$MDV <- 1
+doserows$DVID[doserows$AMT > 0] <- 0
 
 #Add back dose information
 df <- rbind(df,doserows)
-df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
+df <- df[order(df$CID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
-#make df for NONEM
+#Add time points for the metabolite
+df2 <- df
+df2$DVID <- 2
+df <- rbind(df, df2)
+df <- df[order(df$CID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
+
+write.csv(df, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote= F, na=".")
 

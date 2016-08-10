@@ -599,13 +599,6 @@ df <- rbind(df,doserows)
 df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
-#make df for NONEM
-dfnm1 <- df
-
-#setnames(dfnm,"ID","CID")
-
-#write.csv(dfnm, file="OnecompFirstOrderAbsOneCompMetab.csv", row.names = F, quote= F, na=".")
-
 #----------------------------------------------------------------------------------------------------
 # 1 compartment-first order absorption with 1-compartment metabolite model via PKADVAN package
 #----------------------------------------------------------------------------------------------------
