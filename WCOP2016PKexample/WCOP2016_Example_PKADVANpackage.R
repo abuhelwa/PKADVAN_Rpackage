@@ -581,7 +581,7 @@ doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
 PKtimes <- outer(dosetimes,doseseq,"+")
 
 #set number of subjects
-nsub <- 1
+nsub <- 100
 ID <- 1:nsub
 
 #Make dataframe
@@ -636,7 +636,7 @@ dfadvan <- df
 dfadvan$FR <- FR
 #Calculate group parameter values including any covariate effects
 dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
-dfadvan$V  <- V2pop*exp(BSVV)
+dfadvan$V  <- Vpop*exp(BSVV)
 dfadvan$KA <- KApop*exp(BSVKA)
 dfadvan$F1 <- F1pop*exp(BSVF1)
 dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
@@ -645,6 +645,7 @@ dfadvan$VM <- VpopMet*exp(BSVVM)
 #Apply PKADVAN function to each ID in df
 simdf <- ddply(dfadvan, .(ID), OneCompFirstOrderAbsOneCompMetab)
 head(simdf)
+tail(simdf)
 
 #Add residual unexplained variability (within subject variability)
 #For example; Additive error model
