@@ -43,7 +43,7 @@
 #-------------------------------------------------------------------
 # 1 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
-OneCompIVbolus <- function(inputDataFrame){
+OneCompIVbolus <- function(inputDataFrame, A1init=0){
     #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT, MDV, CL, V
     #Returns a dataframe with populated columns for A1, and IPRED
 
@@ -57,7 +57,7 @@ OneCompIVbolus <- function(inputDataFrame){
     inputDataFrame$A1 <- 0
 
     #Set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]
 
     #process calculations using the Cpp code
     OneCompIVbolusCpp( inputDataFrame )
