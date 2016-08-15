@@ -1,4 +1,8 @@
 #WCOP2016 simulation PK example using PKADVAN package
+	#Before running the PK example, you need to:
+		#(1) Download and install the PKADVAN package from GitHib ( https://github.com/abuhelwa/PKADVAN_Rpackage )
+		#(2) intall the plyr package.
+		
 	rm(list=ls(all=TRUE))
 	graphics.off()
 
@@ -8,7 +12,7 @@
 
 	master.dir <- "D:/AAbuhelwa/Projects/6_ADVAN_Derivation_Testing/WCOP216_example"	
 #--------------------------------------------------------------
-#Customize ggplot2 theme - R 2.15.3
+#Customize ggplot2 theme -
 	theme_bw2 <- theme_set(theme_bw(base_size = 20))
 	theme_bw2 <- theme_update(plot.margin = unit(c(1.5,1.5,3,1.5), "lines"),
 							  axis.title.x=element_text(size = 18, vjust = 0),
@@ -21,9 +25,6 @@
 
 	CI90lo <- function(x) quantile(x, probs=0.05,na.rm=T)
 	CI90hi <- function(x) quantile(x, probs=0.95,na.rm=T)
-
-	CI95lo <- function(x) quantile(x, probs=0.025,na.rm=T)
-	CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 
 #########################################################
 ## Three steps for performing simulations:
@@ -130,7 +131,7 @@
 	#IPRED
 	plotobj <- NULL
 	titletext <- expression(atop("Simulated Drug Concentrations",
-	                             atop(italic("Two compartment- two tranist first-order absorption"),"Median and 90% Prediction Interval, 1000 subjects"))) 
+	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects"))) 
 	plotobj <- ggplot(data=simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
@@ -143,7 +144,7 @@
     #DV
 	plotobj <- NULL
 	titletext <- expression(atop("Simulated Drug Concentrations",
-	                             atop(italic("Two compartment- two tranist first-order absorption"),"Median and 90% Prediction Interval, 1000 subjects"))) 
+	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects"))) 
 	
 	plotobj <- ggplot(data=simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
