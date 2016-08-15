@@ -2,7 +2,7 @@
 	#Before running the simulation examples below, you need to:
 		#(1) Download and install the PKADVAN package from GitHib ( https://github.com/abuhelwa/PKADVAN_Rpackage )
 		#(2) intall the plyr package.
-		
+
 	rm(list=ls(all=TRUE))
 	graphics.off()
 
@@ -93,7 +93,7 @@
 dosetimes <- c(seq(0,72,4))
 tlast <- 96
 #set number of subjects
-nsub <- 1000
+nsub <- 1
 ID  <- 1:nsub
 #Make dataframe: CLCR: is creatinine clearance
 df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
@@ -127,7 +127,7 @@ Vpop  <- 10      # central volume of distribution
 #Modify df for ADVAN calculation and include any covariate effects on the PK parameters
 dfadvan <- df
 #Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
+dfadvan$CL <- CLpop #*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
 dfadvan$V  <- Vpop
 
 #-----------------------
