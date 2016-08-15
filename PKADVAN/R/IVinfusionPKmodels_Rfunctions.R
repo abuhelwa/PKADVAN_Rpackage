@@ -43,7 +43,7 @@
 #-------------------------------------------------------------------
 # 1 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
-OneCompIVinfusion <- function(inputDataFrame){
+OneCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT, MDV, RATE, RATEALL, CL, V
 #Returns a dataframe with populated columns for A1, and IPRED
 
@@ -60,7 +60,7 @@ OneCompIVinfusion <- function(inputDataFrame){
     inputDataFrame$k10    <- inputDataFrame$CL/inputDataFrame$V
 
     #set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- 0    # drug amount in the central compartment at time zero.
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init    # drug amount in the central compartment at time zero.
     OneCompIVinfusionCpp( inputDataFrame )
 
     #Remove end infusion time points
@@ -122,7 +122,7 @@ OneCompIVinfusion <- function(inputDataFrame){
 # 2 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
 # the TwoCompIVinfusion function but hybrid of R and C++ code
-TwoCompIVinfusion <- function(inputDataFrame){
+TwoCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT,MDV, RATE, RATEALL, CL, V1, Q, V2
 #Returns a dataframe with populated columns for A1, A2, and IPRED
 
@@ -147,8 +147,8 @@ TwoCompIVinfusion <- function(inputDataFrame){
     inputDataFrame$A2 <- 0
 
     #set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- 0    # drug amount in the central compartment at time zero.
-    inputDataFrame$A2[inputDataFrame$TIME==0] <- 0    # drug amount in the peripheral compartment at time zero.
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init	# drug amount in the central compartment at time zero.
+    inputDataFrame$A2[inputDataFrame$TIME==0] <- 0		# drug amount in the peripheral compartment at time zero.
 
     TwoCompIVinfusionCpp( inputDataFrame )
 
@@ -214,7 +214,7 @@ TwoCompIVinfusion <- function(inputDataFrame){
 # 3 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
 # the ThreeCompIVinfusion function but hybrid of R and C++ code
-ThreeCompIVinfusion <- function(inputDataFrame){
+ThreeCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT,MDV,RATE, RATEALL, CL, V1, Q2, V2, Q3, V3
 #Returns a dataframe with populated columns for A1, A2, A3,and IPRED
 
@@ -238,7 +238,7 @@ ThreeCompIVinfusion <- function(inputDataFrame){
     inputDataFrame$k30 <- 0
 
     #set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- 0     # drug amount in the central compartment at time zero.
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init     # drug amount in the central compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0     # drug amount in the 1st-peripheral compartment at time zero.
     inputDataFrame$A3[inputDataFrame$TIME==0] <- 0     # drug amount in the 2nd-peripheral compartment at time zero.
 
