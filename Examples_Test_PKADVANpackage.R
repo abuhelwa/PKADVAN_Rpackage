@@ -1,36 +1,36 @@
-#Test PK examples script for PKADVAN functions
-rm(list=ls(all=TRUE))
-graphics.off()
+#Test PK examples using PKADVAN functions
+	#Before running the simulation examples below, you need to:
+		#(1) Download and install the PKADVAN package from GitHib ( https://github.com/abuhelwa/PKADVAN_Rpackage )
+		#(2) intall the plyr package.
 
-library(PKADVAN)
-library(plyr)
-library(doBy)
-library(ggplot2)
+	rm(list=ls(all=TRUE))
+	graphics.off()
+
+	library(PKADVAN)
+	library(plyr)
+	library(doBy)
+	library(ggplot2)
 
 #--------------------------------------------------------------
 #Customize ggplot2 theme - R 2.15.3
-theme_bw2 <- theme_set(theme_bw(base_size = 20))
-theme_bw2 <- theme_update(plot.margin = unit(c(1.5,1.5,3,1.5), "lines"),
-                          axis.title.x=element_text(size = 18, vjust = 0),
-                          axis.title.y=element_text(size = 18, vjust = 0, angle = 90),
-                          strip.text.x = element_text(size=12, margin = margin(3, 0, 3, 0)),
-                          strip.text.y=element_text(size = 16, angle = 90))
+	theme_bw2 <- theme_set(theme_bw(base_size = 20))
+	theme_bw2 <- theme_update(plot.margin = unit(c(1.5,1.5,3,1.5), "lines"),
+							  axis.title.x=element_text(size = 18, vjust = 0),
+							  axis.title.y=element_text(size = 18, vjust = 0, angle = 90),
+							  strip.text.x = element_text(size=12, margin = margin(3, 0, 3, 0)),
+							  strip.text.y=element_text(size = 16, angle = 90))
 
 #--------------------------------------------------------------
 #Confidence intervals - from function utility
 
-CI90lo <- function(x) quantile(x, probs=0.05,na.rm=T)
-CI90hi <- function(x) quantile(x, probs=0.95,na.rm=T)
-
-CI95lo <- function(x) quantile(x, probs=0.025,na.rm=T)
-CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
+	CI90lo <- function(x) quantile(x, probs=0.05,na.rm=T)
+	CI90hi <- function(x) quantile(x, probs=0.95,na.rm=T)
 
 ####################################################
 ## Three simple Steps for performing simulations:
 # 1.  Generate a simulation data frame with the individual PK parameters and include any covariate effects on the PK parameters.
 # 2.  Run the "PKADVAN" function for the selected model: the "PKADVAN" function will return the simulated amounts in each compartment of the PK system and IPREDs for the central compartment.
 # 3.  Add residul un-explained variability to the IPREDs.
-
 
 ###################################################
 #The "PKADVAN" package contains the following models
@@ -93,7 +93,7 @@ CI95hi <- function(x) quantile(x, probs=0.975,na.rm=T)
 dosetimes <- c(seq(0,72,4))
 tlast <- 96
 #set number of subjects
-nsub <- 1000
+nsub <- 1
 ID  <- 1:nsub
 #Make dataframe: CLCR: is creatinine clearance
 df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),dosetimes))),"AMT"=0,"MDV"=0,"CLCR"=90)
@@ -127,7 +127,7 @@ Vpop  <- 10      # central volume of distribution
 #Modify df for ADVAN calculation and include any covariate effects on the PK parameters
 dfadvan <- df
 #Calculate group parameter values including any covariate effects
-dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
+dfadvan$CL <- CLpop #*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
 dfadvan$V  <- Vpop
 
 #-----------------------
