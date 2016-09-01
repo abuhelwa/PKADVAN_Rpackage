@@ -8,11 +8,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-# Introduction
+## Introduction
   ADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion,
 and first-order absorption have been derived and published by [Abuhelwa et al., 2015](http://www.ncbi.nlm.nih.gov/pubmed/25841670). The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or time-varying covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language.
 
-# Aims
+## Aims
 The aims of this study were to:
 
   - enhance the performance and increase the computational speed for the ADVAN-style analytical solutions through coding the
@@ -21,7 +21,7 @@ languages.
   - To present them in an R package to make them available for the wider audience to be utilized for various
 applications.
 
-# Methods
+## Methods
 ADVAN-style analytical solutions were written in the C++ programming language and were integrated in R using
 the Rcpp package attributes (3). The integrated R/C++ ADVAN-style analytical solutions were then made into an open-source
 R package (“PKADVAN”) using RStudio. To assess computational speed, simulations for 1000 subjects using three compartment
@@ -29,7 +29,7 @@ IV bolus, infusion, and first-order absorption models were performed and compare
 equivalent compiled/uncompiled R-coded functions published by Abuhelwa et al. (1). For each subject, two doses were
 simulated with the evaluations performed at 1 hour time intervals for 2 days.
 
-# Results
+## Results
 Simulations using the integrated R/C++ ADVAN-style analytical solutions performed substantially faster than
 the equivalent R-coded functions. The integrated R/C++ functions simulated data for 1000 subjects in ~1 second, which was
 23 26 times faster than the equivalent R-coded functions. The relative speed of the integrated R/C++ functions was greater
