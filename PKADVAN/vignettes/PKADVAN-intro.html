@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ahmad Y Abuhelwa, David J.R Foster, Richard N Upton" />
 
-<meta name="date" content="2016-06-30" />
+<meta name="date" content="2016-09-02" />
 
 <title>PKADVAN-introduction</title>
 
@@ -32,30 +32,30 @@
 
 <h1 class="title">PKADVAN-introduction</h1>
 <h4 class="author"><em>Ahmad Y Abuhelwa, David J.R Foster, Richard N Upton</em></h4>
-<h4 class="date"><em>2016-06-30</em></h4>
+<h4 class="date"><em>2016-09-02</em></h4>
 
 </div>
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>ADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion, and first-order absorption have been derived and published by <a href="http://www.ncbi.nlm.nih.gov/pubmed/25841670">Abuhelwa et al., 2015</a>. The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language and have been shown to have speed advantages over solutions using differential equation solvers (1).</p>
-<div id="aims" class="section level2">
-<h2>Aims</h2>
+<p>ADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion, and first-order absorption have been derived and published by <a href="http://www.ncbi.nlm.nih.gov/pubmed/25841670">Abuhelwa et al., 2015</a>. The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or time-varying covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language.</p>
+</div>
+<div id="aims" class="section level1">
+<h1>Aims</h1>
 <p>The aims of this study were to:</p>
 <ul>
 <li>enhance the performance and increase the computational speed for the ADVAN-style analytical solutions through coding the ADVAN-style analytical functions in a hybrid R/C++ programming languages.</li>
 <li>To present them in an R package to make them available for the wider audience to be utilized for various applications.</li>
 </ul>
 </div>
-<div id="methods" class="section level2">
-<h2>Methods</h2>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
 <p>ADVAN-style analytical solutions were written in the C++ programming language and were integrated in R using the Rcpp package attributes (3). The integrated R/C++ ADVAN-style analytical solutions were then made into an open-source R package (“PKADVAN”) using RStudio. To assess computational speed, simulations for 1000 subjects using three compartment IV bolus, infusion, and first-order absorption models were performed and compared to relative computational speed of the equivalent compiled/uncompiled R-coded functions published by Abuhelwa et al. (1). For each subject, two doses were simulated with the evaluations performed at 1 hour time intervals for 2 days.</p>
 </div>
-<div id="results" class="section level2">
-<h2>Results</h2>
+<div id="results" class="section level1">
+<h1>Results</h1>
 <p>Simulations using the integrated R/C++ ADVAN-style analytical solutions performed substantially faster than the equivalent R-coded functions. The integrated R/C++ functions simulated data for 1000 subjects in ~1 second, which was 23 26 times faster than the equivalent R-coded functions. The relative speed of the integrated R/C++ functions was greater with the more complex models and with more extensive sample time evaluations. For example, simulations from the 3 compartment IV infusion model using the integrated R/C++ function were ~46 times faster than the R-coded function when the same dosing regimen simulations were extended for 5 days. The integrated R/C++ functions for 1, 2, 3 compartment IV bolus, infusion, and first-order absorption models are presented in the “PKADVAN” package which can be downloaded from GitHub.</p>
-</div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
 <p>A main application for the integrated R/C++ functions is for simulation from stochastic population pharmacokinetic models coded in R and incorporated into reactive Shiny Web applications (4). The speed of the integrated R/C++ analytical solutions is important here as they allow for simulating larger populations (e.g. 1000 subjects) without compromising the speed and the reactivity benefits of the Shiny application. The integrated R/C++ functions could be incorporated into an open-source mixed-effect modelling framework to estimate population parameters where speed is always desirable. With their capacity to handle complex dosing regimens and covariate structures, the “PKADVAN” package is expected to facilitate the investigation of useful open-source software for modelling and simulating pharmacokinetic data.</p>
