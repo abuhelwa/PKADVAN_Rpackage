@@ -9,12 +9,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 # Introduction
-  xxxADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion,
-and first-order absorption have been derived and published by [Abuhelwa et al., 2015](http://www.ncbi.nlm.nih.gov/pubmed/25841670). The analytical solutions are used to simulate
-the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model
-from one time point to the next, allowing for any dose or covariate factors to be accounted for. The ADVAN-style analytical
-solutions were coded in the R programming language and have been shown to have speed advantages over solutions using differential
-equation solvers (1).
+  ADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion,
+and first-order absorption have been derived and published by [Abuhelwa et al., 2015](http://www.ncbi.nlm.nih.gov/pubmed/25841670). The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or time-varying covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language (1).
 
 ##Aims
 The aims of this study were to:
