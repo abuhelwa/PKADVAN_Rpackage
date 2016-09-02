@@ -1,5 +1,5 @@
 ---
-title: "PKADVAN-introduction"
+title: "## PKADVAN: an R package for simulating from various PK models"
 author: "Ahmad Y Abuhelwa, David J.R Foster, Richard N Upton"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -31,7 +31,7 @@ The aims of this work were to:
   - All pharmacokinetic models incorporated into the PKADVAN package have been validated against the commercially available population pharmacokinetic modelling software NONMEM.
 
 ## PKADVAN package
-  - A total of 26 pharmacokinetic models were incorporated into the “PKADVAN” package library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1.
+  - A total of 26 pharmacokinetic models were incorporated into the “PKADVAN” package library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1. 
 
   - To perform pharmacokinetic simulations using the “PKADVAN” package, two simple steps are required: (1) Supply a NONMEM-style simulation data frame with the individual pharmacokinetic parameters including any covariate effects on the PK parameters (2) Call the “PKADVAN” function of the respective model to process simulations.
 
@@ -41,13 +41,20 @@ The PKADVAN functions returns the drug amounts in the respective compartments an
   - The PKADVAN functions are capable of simulating arbitrary dosing regimens and can account for time-changing covariate structures; however, covariate effects on respective parameters must be calculated prior processing simulations.
 
   - All the PKADVAN functions were validated against NONMEM and both outputs were identical. 
-Stochastic population pharmacokinetic model simulations using the PKADVAN functions are comparable to NONMEM. An example output using PKADVAN package versus NONMEM is presented in Figure 1.
+Stochastic population pharmacokinetic model simulations using the PKADVAN functions are comparable to NONMEM. An example output using PKADVAN package versus NONMEM is presented in Figure 1. The R-script for processing the simulations presented in Figure 1 is provided [here](https://github.com/abuhelwa/PKADVAN_Rpackage/tree/master/WCOP2016PKexample).
 
   - The “PKADVAN” package is available on GitHub and can be downloaded by clicking [here](https://github.com/abuhelwa/PKADVAN_Rpackage). 
   - Users are encouraged to read the package documentation and run the  simulation examples provided with the package.
   
   - Simulations using the integrated R/C++ ADVAN-style analytical solutions were substantially faster (8‑34 times) than the equivalent R-coded functions (Table 2). The relative speed of the integrated R/C++ functions was greater with the more complex models and with more extensive sample time evaluations (Table 2). 
 
+  
+  ![Table 1.  Pharmacokinetic models of the “PKADVAN” package library](figures/PKADVAN_libraryTable_Calibri.png)
+  
+  ![Table 2](figures/Table_compuationcomp_PKADVAN.png)  
+  
+  ![Figurexxx 2](figures/DV_R_NONMEM.png)
+  
 ## Applications
   - The PKADVAN package can be used for performing simulations from stochastic population pharmacokinetic models coded in R and incorporated into reactive ‘Shiny’ web applications where speed is important as it allows for simulating larger populations without compromising the reactivity of the Shiny application.
 
