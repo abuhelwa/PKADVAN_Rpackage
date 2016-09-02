@@ -10,7 +10,7 @@ vignette: >
 ---
 ## Introduction 
   ADVAN-style analytical solutions for 1, 2, 3 compartment linear pharmacokinetic models of intravenous bolus, infusion,
-and first-order absorption have been derived and published by [Abuhelwa et al., 2015](http://www.ncbi.nlm.nih.gov/pubmed/25841670) [1]. The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or time-varying covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language [2] and have been shown to have speed advantages over solutions using differential equation solvers [1]. 
+and first-order absorption have been derived and published by [Abuhelwa et al., 2015](http://www.ncbi.nlm.nih.gov/pubmed/25841670) [^1]. The analytical solutions are used to simulate the time-course of drug amounts in the compartments of a pharmacokinetic models and they “advance” the solution of the model from one time point to the next, allowing for any dose or time-varying covariate factors to be accounted for. The ADVAN-style analytical solutions were coded in the R programming language [^2] and have been shown to have speed advantages over solutions using differential equation solvers [1]. 
 
 ## Aims
 The aims of this work were to:
@@ -22,7 +22,7 @@ The aims of this work were to:
   - Expand the “PKADVAN” package library to include other pharmacokinetic models such as transit first-order absorption and metabolite models.
 
 ## Methods
-  - The ADVAN-style analytical solutions were derived using Laplace transforms and then were coded in the C++ programming language and integrated into R using the Rcpp package attributes [3].
+  - The ADVAN-style analytical solutions were derived using Laplace transforms and then were coded in the C++ programming language and integrated into R using the Rcpp package attributes [^3].
   
   - The integrated R/C++ ADVAN-style analytical functions were built into an open-source R package (“PKADVAN” package). 
   
@@ -58,10 +58,9 @@ Stochastic population pharmacokinetic model simulations using the PKADVAN functi
 ## Applications
   - The PKADVAN package can be used for performing simulations from stochastic population pharmacokinetic models coded in R and incorporated into reactive ‘Shiny’ web applications where speed is important as it allows for simulating larger populations without compromising the reactivity of the Shiny application.
 
-  - The PKADVAN package can be implemented for data fitting, and for calculating confidence and prediction intervals of pharmacokinetic models’ parameters [4].
+  - The PKADVAN package can be implemented for data fitting, and for calculating confidence and prediction intervals of pharmacokinetic models’ parameters [^4].
   
   - The PKADVAN package could be incorporated into an open-source mixed-effect modelling framework to estimate population parameters where speed is always desirable. 
-
 
 ##Conclusions
 With its speed advantages and the capacity to handle arbitrary dosing regimens and covariate structures, the “PKADVAN” package is expected to facilitate the investigation of a useful open-source software for modelling and simulating pharmacokinetic data.
@@ -71,12 +70,7 @@ With its speed advantages and the capacity to handle arbitrary dosing regimens a
   - Implement analytical solutions for combined dosing regimens (e.g., IV bolus plus infusion).
   - Implement the analytical solutions for fitting population PK data
 
-
-## References
-  1. Abuhelwa AY, Foster DJ, Upton RN. 2015. ADVAN-style analytical solutions for common pharmacokinetic models. J Pharmacol Toxicol Methods 73:42-48.
-  2. R Core Team. 2014. R: A Language and Environment for Statistical Computing R Foundation for Statistical Computing, Vienna, Austria.
-  3. Eddelbuettel D, François R, Allaire J, Chambers J, Bates D, Ushey K. 2011. Rcpp: Seamless R and C++ integration. Journal of Statistical Software 40:1-18.
-  4. Kümmel A, Abuhelwa AY, Dingemanse J, Krause A. PECAN, a Shiny application for calculating confidence and prediction intervals for pharmacokinetic and pharmacodynamic models. The twenty-fifth Annual Population Approach Group Europe (PAGE) Meeting. 2016
-
-
-
+[^1]: Abuhelwa AY, Foster DJ, Upton RN. 2015. ADVAN-style analytical solutions for common pharmacokinetic models. J Pharmacol Toxicol Methods 73:42-48.
+[^2]: R Core Team. 2014. R: A Language and Environment for Statistical Computing R Foundation for Statistical Computing, Vienna, Austria.
+[^3]: Eddelbuettel D, François R, Allaire J, Chambers J, Bates D, Ushey K. 2011. Rcpp: Seamless R and C++ integration. Journal of Statistical Software 40:1-18.
+[^4]: Kümmel A, Abuhelwa AY, Dingemanse J, Krause A. PECAN, a Shiny application for calculating confidence and prediction intervals for pharmacokinetic and pharmacodynamic models. The twenty-fifth Annual Population Approach Group Europe (PAGE) Meeting. 2016
