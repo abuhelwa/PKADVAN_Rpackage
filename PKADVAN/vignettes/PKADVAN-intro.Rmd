@@ -17,7 +17,7 @@ The aims of this work were to:
 
   - Enhance the computational speed of the ADVAN-style analytical functions through coding them in hybrid R/C++ programming languages for faster simulation processing.
 
-  - Present the ADVAN-style analytical functions in an R package, “PKADVAN” package, and make them available for the wider audience.
+  - Present the ADVAN-style analytical functions in an R package, **PKADVAN package**, and make them available for the wider audience.
   
   - Expand the “PKADVAN” package library to include other pharmacokinetic models such as transit first-order absorption and metabolite models.
 
@@ -28,7 +28,7 @@ The aims of this work were to:
   
   - To assess computational speed, simulations for 1000 subjects using three compartment IV bolus, infusion, and first-order absorption models were performed and compared to relative computational speed of the equivalent R-coded functions. For each subject, two doses were simulated with the evaluations performed at 1 hour time intervals for 2 days.
   
-  - All pharmacokinetic models incorporated into the “PKADVAN” package have been validated against the commercially available population pharmacokinetic modelling software NONMEM.
+  - All pharmacokinetic models incorporated into the PKADVAN package have been validated against the commercially available population pharmacokinetic modelling software NONMEM.
 
 ## PKADVAN package
   - A total of 26 pharmacokinetic models were incorporated into the “PKADVAN” package library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1.
