@@ -2,7 +2,7 @@
 	#Before running the PK example, you need to:
 		#(1) Download and install the PKADVAN package from GitHib ( https://github.com/abuhelwa/PKADVAN_Rpackage )
 		#(2) intall the plyr package.
-		
+
 	rm(list=ls(all=TRUE))
 	graphics.off()
 
@@ -10,7 +10,7 @@
 	library(plyr)
 	library(ggplot2)
 
-	master.dir <- "D:/AAbuhelwa/Projects/6_ADVAN_Derivation_Testing/WCOP216_example"	
+	master.dir <- "D:/AAbuhelwa/Projects/6_ADVAN_Derivation_Testing/WCOP216_example"
 #--------------------------------------------------------------
 #Customize ggplot2 theme -
 	theme_bw2 <- theme_set(theme_bw(base_size = 20))
@@ -42,58 +42,58 @@
 	#Set dose records:
 	dosetimes <- c(seq(0,48,12))
 	tlast <- 96
-	
+
 	#Now define finer sample times for after a dose to capture Cmax
 	doseseq <- c(0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10)
-	
+
 	#Use the outer product but with addition to expand this doseseq for all dosetimes
 	PKtimes <- outer(dosetimes,doseseq,"+")
-	
+
 	#set number of subjects
 	nsub <- 1000
 	ID <- 1:nsub
-	
+
 	#Make dataframe
 	df <- expand.grid("ID"=ID,"TIME"=sort(unique(c(seq(0,tlast,1),PKtimes))),"AMT"=0,"MDV"=0,"DV"=NA,"CLCR"=120)
 	df$CLCR[df$TIME <= 48] <- 90
-	
+
 	doserows <- subset(df, TIME%in%dosetimes)
-	
+
 	#Dose: It can be any arbitrary dose
 	doserows$AMT <- 500
 	doserows$MDV <- 1
-	
+
 	#Add back dose information
 	df <- rbind(df,doserows)
 	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
-	
+
 #----------------------------------------------------------------------------------------------------
 # Two compartment-2 transit first-order absorption model via PKADVAN package
 #----------------------------------------------------------------------------------------------------
 #Define between subject variability on PK parameters
 	#BSV (Omegas as SD)
-	ETA1CL  <- 0.15     
-	ETA2V2  <- 0.12		
-	ETA3Q   <- 0.14		
-	ETA4V3  <- 0.05		
-	ETA5KTR <- 0.30    
+	ETA1CL  <- 0.15
+	ETA2V2  <- 0.12
+	ETA3Q   <- 0.14
+	ETA4V3  <- 0.05
+	ETA5KTR <- 0.30
 
 #Define residual error model
 	#Residuals (Epsilons as SD)
 	EPS1	<- 0.10		#Proportional residual error
 	EPS2	<- 0.15		#Additive residual error
 
-	#Use random number generator to simulate residuals from a normal distribution    
-	BSVCL	<- rnorm(nsub, mean = 0, sd = ETA1CL)	#BSV on CL  
-	BSVV2	<- rnorm(nsub, mean = 0, sd = ETA2V2)	#BSV on V2  
+	#Use random number generator to simulate residuals from a normal distribution
+	BSVCL	<- rnorm(nsub, mean = 0, sd = ETA1CL)	#BSV on CL
+	BSVV2	<- rnorm(nsub, mean = 0, sd = ETA2V2)	#BSV on V2
 	BSVQ	<- rnorm(nsub, mean = 0, sd = ETA3Q)	#BSV on Q
 	BSVV3	<- rnorm(nsub, mean = 0, sd = ETA4V3)	#BSV on V3
 	BSVKTR	<- rnorm(nsub, mean = 0, sd = ETA5KTR)  #BSV on KTR
 
 	EPS1 <- rnorm(nsub, mean = 0, sd = EPS1)	#Proportional residual error
 	EPS2 <- rnorm(nsub, mean = 0, sd = EPS2)	#Additive residual error
-	
+
 #Set population PK parameters for 2-compartment First-order absorption model
 	CLpop   <- 0.5      #clearance
 	V2pop   <- 20       #central volume of distribution
@@ -111,27 +111,27 @@
 	dfadvan$V3  <- V3pop*exp(BSVV3)
 	dfadvan$KTR <- KTRpop*exp(BSVKTR)
 	dfadvan$F1  <- F1pop
-	
+
 	#Apply PKADVAN functions
 	simdf <- ddply(dfadvan, .(ID), TwoCompTwoTransit)
 	head(simdf)
-	
+
 #Add residual unexplained variability (within subject variability)
-	#For example; Additive error model
+	#For example; Combined additive and proportional error model
 	simdf$DV <- simdf$IPRED*(1 + EPS1) + EPS2
 
-#Plotting	
+#Plotting
 	#Subset missing data
 	simdf <- subset(simdf, MDV==0)
 	simdf$SOURCE <- "PKADVAN-R package"
-    
+
 	#change working directory
 	setwd(paste(master.dir,"/2comp_oral_2tranist.nm7",sep=""))
-	
+
 	#IPRED
 	plotobj <- NULL
 	titletext <- expression(atop("Simulated Drug Concentrations",
-	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects"))) 
+	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects")))
 	plotobj <- ggplot(data=simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
@@ -144,8 +144,8 @@
     #DV
 	plotobj <- NULL
 	titletext <- expression(atop("Simulated Drug Concentrations",
-	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects"))) 
-	
+	                             atop(italic("Two compartment- two tranist first-order absorption model"),"Median and 90% Prediction Interval, 1000 subjects")))
+
 	plotobj <- ggplot(data=simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
@@ -241,7 +241,7 @@
 	plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 	plotobj
 
-	
+
 #--------------------------------------------
 # 2 compartment-IV Bolus via PKADVAN package
 #--------------------------------------------
