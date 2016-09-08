@@ -178,13 +178,16 @@ head(simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),fun.y=median, geom="line", colour="red", size=1)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= IPRED),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
 	plotobj <- plotobj + ggtitle(titletext)
-	plotobj <- plotobj + scale_y_continuous("Concentration\n")
+	plotobj <- plotobj + scale_y_continuous("IPREDs\n")
 	plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-	plotobj
 	
 ```
 
-### Step 5: Add residual unexplained variability (within subject variability) on IPRED
+```{r, fig.width=7, fig.height=5}
+  plotobj
+```
+
+### Step 5: Add residual unexplained variability (within subject variability) on IPREDs
 
 ```{r}
 #combined additive and proportional error model
@@ -202,10 +205,13 @@ head(simdf)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),fun.y=median, geom="line", colour="red", size=1)
 	plotobj <- plotobj + stat_summary(aes(x=TIME, y= DV),geom="ribbon", fun.ymin="CI90lo", fun.ymax="CI90hi", alpha=0.3)
 	plotobj <- plotobj + ggtitle(titletext)
-	plotobj <- plotobj + scale_y_continuous("Concentration (DV)\n")
+	plotobj <- plotobj + scale_y_continuous("DV\n")
 	plotobj <- plotobj + scale_x_continuous("\nTime after dose")
-	plotobj
-	
+
+```
+
+```{r, fig.width=7, fig.height=5}
+  plotobj
 ```
 
 ## Applications
