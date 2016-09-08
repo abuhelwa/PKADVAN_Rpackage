@@ -17,7 +17,7 @@ The aims of this work were to:
 
   - Enhance the computational speed of the ADVAN-style analytical functions through coding them in hybrid R/C++ programming languages for faster simulation processing.
 
-  - Present the ADVAN-style analytical functions in an R package, **PKADVAN package**, and make them available for the wider audience.
+  - Present the ADVAN-style analytical functions in an R package, **PKADVAN package** and make them available for the wider audience.
   
   - Expand the “PKADVAN” package library to include other pharmacokinetic models such as transit first-order absorption and metabolite models.
 
@@ -31,7 +31,7 @@ The aims of this work were to:
   - All pharmacokinetic models incorporated into the PKADVAN package have been validated against the commercially available population pharmacokinetic modelling software NONMEM.
 
 ## PKADVAN package
-  - A total of 26 pharmacokinetic models were incorporated into the “PKADVAN” package library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1. 
+  - A total of 26 pharmacokinetic models were incorporated into the [PKADVAN package](https://github.com/abuhelwa/PKADVAN_Rpackage) library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1. 
 
   - To perform pharmacokinetic simulations using the “PKADVAN” package, two simple steps are required: (1) Supply a NONMEM-style simulation data frame with the individual pharmacokinetic parameters including any covariate effects on the PK parameters (2) Call the “PKADVAN” function of the respective model to process simulations.
 
