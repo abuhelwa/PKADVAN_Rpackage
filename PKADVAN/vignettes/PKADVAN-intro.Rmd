@@ -55,8 +55,12 @@ Stochastic population pharmacokinetic model simulations using the PKADVAN functi
   
   ![Figurexxx 2](figures/DV_R_NONMEM.png)
   
+  
+  
 ## Simulation Example
-The following example illustrates the use of **PKADVAN** package to simulate the concentartion-time profiles of 1,000 subjects based on two compartment-two transit first-order oral absorption model. Creatinine clearance was added as a time-changing covariate on central clearance to show the cabability of the package in handling time-changing covariates. Between subject variability was added on `CL`, `V2`, `Q`, `V3`, `KA`. Proportional and additive residual error model was added on the individual predictions. 
+The following example illustrates the use of **PKADVAN** package to simulate the concentartion-time profiles of 1,000 subjects based on two compartment-two transit first-order oral absorption model. Creatinine clearance was added as a time-changing covariate on central clearance to show the cabability of the package in handling time-changing covariates. Between subject variability was added on `CL`, `V2`, `Q`, `V3`, `KA`. Proportional and additive residual error model was added on the individual predictions.
+
+  ![Figure 3](figures/TwocompTwoTransit.png)
 
 ### Step 1: Generate a NONMEM-style data frame
 If you have a NONMEM-style data frame then load it into R and skip this step, otherwise, use R to generate a simulation data frame.
