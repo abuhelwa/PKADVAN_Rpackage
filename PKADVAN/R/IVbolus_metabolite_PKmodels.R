@@ -67,10 +67,6 @@ OneCompIVbolusOneCompMetab    <- function(inputDataFrame){
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V     #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
 
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$AM <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]		# Parent amount in the central compartment at time zero.
     inputDataFrame$AM[inputDataFrame$TIME==0] <- 0                                 							 	# Metabolite amount at time zero.
@@ -161,11 +157,6 @@ TwoCompIVbolusOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V1    #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]	# Parent amount in the central compartment at time zero.
@@ -263,12 +254,6 @@ ThreeCompIVbolusOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V1    #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]	# Parent amount in the central compartment at time zero.

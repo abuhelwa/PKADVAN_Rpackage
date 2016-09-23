@@ -142,10 +142,6 @@ TwoCompIVinfusion <- function(inputDataFrame, A1init = 0){
     inputDataFrame$k21 <- inputDataFrame$Q/inputDataFrame$V2
     inputDataFrame$k20 <- 0
 
-    #Adding a vector for A2 and A2 for marginal speed gain
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init	# drug amount in the central compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0		# drug amount in the peripheral compartment at time zero.
