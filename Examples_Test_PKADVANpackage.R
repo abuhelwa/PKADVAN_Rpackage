@@ -719,7 +719,7 @@ simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
 
 #plotting
 #subset MDV==0
-simdfall <- subset(simdfall, MDV==0)
+#simdfall <- subset(simdfall, MDV==0)
 
 #IPRED
 plotobj <- NULL
@@ -832,7 +832,7 @@ simdfall <- rbind(simdf1,simdf2,simdf3,simdf4)
 
 #ploting
 #subet MDV==0
-simdfall <- subset(MDV==0)
+#simdfall <- subset(MDV==0)
 
 #IPRED
 plotobj <- NULL
