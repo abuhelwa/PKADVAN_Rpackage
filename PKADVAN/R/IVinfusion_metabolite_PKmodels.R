@@ -74,10 +74,6 @@ OneCompIVinfusionOneCompMetab <- function(inputDataFrame){
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V         #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
 
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$AM <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- 0        				         # Parent amount in the central compartment at time zero.
     inputDataFrame$AM[inputDataFrame$TIME==0] <- 0                                                                         # Amount in the metabolite compartment at time zero.
@@ -178,11 +174,6 @@ TwoCompIVinfusionOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V1        #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Adding a vector for A2 and A2 for marginal speed gain
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- 0        # Parent amount in the central compartment at time zero.
@@ -291,12 +282,6 @@ ThreeCompIVinfusionOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V1        #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- 0                                                                         # Amount in the central compartment at time zero.

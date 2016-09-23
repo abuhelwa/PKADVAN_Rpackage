@@ -17,7 +17,7 @@ The aims of this work were to:
 
   - Enhance the computational speed of the ADVAN-style analytical functions through coding them in hybrid R/C++ programming languages for faster simulation processing.
 
-  - Present the ADVAN-style analytical functions in an R package, **PKADVAN package**, and make them available for the wider audience.
+  - Present the ADVAN-style analytical functions in an R package, **PKADVAN package** and make them available for the wider audience.
   
   - Expand the “PKADVAN” package library to include other pharmacokinetic models such as transit first-order absorption and metabolite models.
 
@@ -31,7 +31,7 @@ The aims of this work were to:
   - All pharmacokinetic models incorporated into the PKADVAN package have been validated against the commercially available population pharmacokinetic modelling software NONMEM.
 
 ## PKADVAN package
-  - A total of 26 pharmacokinetic models were incorporated into the “PKADVAN” package library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1. 
+  - A total of 26 pharmacokinetic models were incorporated into the [PKADVAN package](https://github.com/abuhelwa/PKADVAN_Rpackage) library including the basic models published by Abuhelwa et al [1]. A list of all the models is presented in Table 1. 
 
   - To perform pharmacokinetic simulations using the “PKADVAN” package, two simple steps are required: (1) Supply a NONMEM-style simulation data frame with the individual pharmacokinetic parameters including any covariate effects on the PK parameters (2) Call the “PKADVAN” function of the respective model to process simulations.
 
@@ -44,19 +44,48 @@ The PKADVAN functions returns the drug amounts in the respective compartments an
 Stochastic population pharmacokinetic model simulations using the PKADVAN functions are comparable to NONMEM. An example output using PKADVAN package versus NONMEM is presented in Figure 1. The R-script for processing the simulations presented in Figure 1 is provided [here](https://github.com/abuhelwa/PKADVAN_Rpackage/tree/master/WCOP2016PKexample).
 
   - The “PKADVAN” package is available on GitHub and can be downloaded by clicking [here](https://github.com/abuhelwa/PKADVAN_Rpackage). 
+  
   - Users are encouraged to read the package documentation and run the  simulation examples provided with the package.
   
   - Simulations using the integrated R/C++ ADVAN-style analytical solutions were substantially faster (8‑34 times) than the equivalent R-coded functions (Table 2). The relative speed of the integrated R/C++ functions was greater with the more complex models and with more extensive sample time evaluations (Table 2). 
+  
+  
+#####Table 1: Pharmacokinetic models of the 'PKADVAN' library
+  Category            | Pharmacokinetic model             |     PKADVAN function name
+------------------  | ---------------------               | -------------------------
+Basic PK models     | 1 comp IV bolus                     | `OneCompIVbolus`
+Basic PK models     | 2 comp IV bolus                     | `TwoCompIVbolus`
+Basic PK models     | 3 comp IV bolus                     | `ThreeCompIVbolus`
+Basic PK models     | 1 comp IV infusion                  | `OneCompIVinfusion`
+Basic PK models     | 2 comp IV infusion                  | `TwoCompIVinfusion`
+Basic PK models     | 3 comp IV infusion                  | `ThreeCompIVinfusion`
+Basic PK models     | 1 comp first-order absorption       | `OneCompFirstOrderAbs`
+Basic PK models     | 2 comp first-order absorption       | `TwoCompFirstOrderAbs`
+Basic PK models     | 3 comp first-order absorption       | `ThreeCompFirstOrderAbs`
+Transit first-order absorption models     | 1 comp-1 transit        | `OneCompOneTransit`
+Transit first-order absorption models     | 1 comp-2 transit				| `OneCompTwoTransit`
+Transit first-order absorption models     | 1 comp-3 transit				| `OneCompThreeTransit`
+Transit first-order absorption models     | 1 comp-4 transit        | `OneCompFourTransit`
+Transit first-order absorption models     | 2 comp-1 transit        | `TwoCompOneTransit`
+Transit first-order absorption models     | 2 comp-2 transit  			| `TwoCompTwoTransit`
+Transit first-order absorption models     | 2 comp-3 transit  			| `TwoCompThreeTransit`
+Transit first-order absorption models     | 2 comp-4 transit        | `TwoCompFourTransit`
+First-order formation metabolite models   | 1 comp IV bolus-1 comp metabolite	    | `OneCompIVbolusOneCompMetab`
+First-order formation metabolite models   | 2 comp IV bolus-1 comp metabolite   	| `TwoCompIVbolusOneCompMetab`
+First-order formation metabolite models   | 3 comp IV bolus-1 comp metabolite	    | `ThreeCompIVbolusOneCompMetab`
+First-order formation metabolite models   | 1 comp IV infusion-1 comp metabolite  | `OneCompIVinfusionOneCompMetab`
+First-order formation metabolite models   | 2 comp IV infusion-1 comp metabolite  | `TwoCompIVinfusionOneCompMetab`
+First-order formation metabolite models   | 3 comp IV infusion-1 comp metabolite  | `ThreeCompIVinfusionOneCompMetab`
+First-order formation metabolite models   | 1 comp first-order absorption-1 comp metabolite	| `OneCompFirstOrderAbsOneCompMetab`
+First-order formation metabolite models   | 2 comp first-order absorption-1 comp metabolite	| `TwoCompFirstOrderAbsOneCompMetab`
+First-order formation metabolite models   | 3 comp first-order absorption-1 comp metabolite	| `ThreeCompFirstOrderAbsOneCompMetab`
 
+
+![Table 2](figures/Table_compuationcomp_PKADVAN.png)  
   
-  ![Table 1.  Pharmacokinetic models of the “PKADVAN” package library](figures/PKADVAN_libraryTable_Calibri.png)
+![Figurexxx 2](figures/DV_R_NONMEM.png)
   
-  ![Table 2](figures/Table_compuationcomp_PKADVAN.png)  
-  
-  ![Figurexxx 2](figures/DV_R_NONMEM.png)
-  
-  
-  
+
 ## Simulation Example
 The following example illustrates the use of **PKADVAN** package to simulate the concentartion-time profiles of 1,000 subjects based on two compartment-two transit first-order oral absorption model. Creatinine clearance was added as a time-changing covariate on central clearance to show the cabability of the package in handling time-changing covariates. Between subject variability was added on `CL`, `V2`, `Q`, `V3`, `KA`. Proportional and additive residual error model was added on the individual predictions.
 

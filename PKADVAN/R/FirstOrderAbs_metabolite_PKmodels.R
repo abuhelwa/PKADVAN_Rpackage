@@ -72,11 +72,6 @@ OneCompFirstOrderAbsOneCompMetab <- function(inputDataFrame){
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V    #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
 
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$AM <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]	#Amount of parent in the absorption compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0																	#Amount of parent in the central compartment at time zero.
@@ -173,12 +168,6 @@ TwoCompFirstOrderAbsOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V2    #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]	#Amount of parent in the absorption compartment at time zero.
@@ -282,13 +271,6 @@ ThreeCompFirstOrderAbsOneCompMetab <- function(inputDataFrame){
     #Calculate micro-rate constants-Metabolite
     inputDataFrame$kmf <- inputDataFrame$CLpop2/inputDataFrame$V2    #Rate constant for metabolite formation
     inputDataFrame$kme <- inputDataFrame$CLM/inputDataFrame$VM	 #Rate constant for metabolite elimination
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A4 <- 0
-    inputDataFrame$AM <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]        # Amount in the absorption compartment at time zero.

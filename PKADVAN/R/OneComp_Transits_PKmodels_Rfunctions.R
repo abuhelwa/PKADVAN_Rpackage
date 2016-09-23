@@ -54,11 +54,6 @@ OneCompOneTransit <- function(inputDataFrame){
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
 
-    #Add columns for amounts for marginal speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A2 <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]     # Amount in the absorption (GUT) compartment at time zero.
     inputDataFrame$A3[inputDataFrame$TIME==0] <- 0                                     # Amount in the first transit
@@ -132,12 +127,6 @@ OneCompTwoTransit <- function(inputDataFrame){
 
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
-
-    #Add columns for amounts for marginal speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A4 <- 0
-    inputDataFrame$A2 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]     # Amount in the absorption (GUT) compartment at time zero.
@@ -215,13 +204,6 @@ OneCompThreeTransit <- function(inputDataFrame){
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
 
-    #Add columns for amounts for marginal speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A4 <- 0
-    inputDataFrame$A5 <- 0
-    inputDataFrame$A2 <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]     # Amount in the absorption (GUT) compartment at time zero.
     inputDataFrame$A3[inputDataFrame$TIME==0] <- 0                                     # Amount in the 1st transit
@@ -298,14 +280,6 @@ OneCompFourTransit <- function(inputDataFrame){
 
     #Calculate micro-rate constants
     inputDataFrame$k20 <- inputDataFrame$CL/inputDataFrame$V2
-
-    #Add columns for amounts for marginal speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A4 <- 0
-    inputDataFrame$A5 <- 0
-    inputDataFrame$A6 <- 0
-    inputDataFrame$A2 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]     # Amount in the absorption (GUT) compartment at time zero.

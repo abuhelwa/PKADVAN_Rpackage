@@ -55,10 +55,6 @@ OneCompFirstOrderAbs <- function(inputDataFrame){
     #Calculate micro-rate constants
     inputDataFrame$k10    <- inputDataFrame$CL/inputDataFrame$V
 
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1] #drug amount in the absorption compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0                                                #drug amount in the central compartment at time zero.
@@ -138,11 +134,6 @@ TwoCompFirstOrderAbs <- function(inputDataFrame){
     inputDataFrame$k23 <- inputDataFrame$Q/inputDataFrame$V2
     inputDataFrame$k32 <- inputDataFrame$Q/inputDataFrame$V3
     #inputDataFrame$k30 <- 0
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1] #drug amount in the absorption compartment at time zero.
@@ -230,12 +221,6 @@ ThreeCompFirstOrderAbs <- function(inputDataFrame){
     inputDataFrame$k24 <- inputDataFrame$Q4/inputDataFrame$V2
     inputDataFrame$k42 <- inputDataFrame$Q4/inputDataFrame$V4
     #inputDataFrame$k40 <- 0
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
-    inputDataFrame$A4 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]*inputDataFrame$F1[1]        # Amount in the absorption compartment at time zero.

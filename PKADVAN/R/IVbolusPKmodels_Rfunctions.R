@@ -53,9 +53,6 @@ OneCompIVbolus <- function(inputDataFrame,  A1init=0){
     #Calculate micro-rate constants
     inputDataFrame$k10 <- inputDataFrame$CL/inputDataFrame$V
 
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-
     #Set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <-  A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]
 
@@ -132,10 +129,6 @@ TwoCompIVbolus <- function(inputDataFrame, A1init = 0){
     inputDataFrame$k12 <- inputDataFrame$Q/inputDataFrame$V1
     inputDataFrame$k21 <- inputDataFrame$Q/inputDataFrame$V2
     #inputDataFrame$k20 <- 0
-
-    #Add columns for amounts for marginals speed gain!
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
@@ -215,11 +208,6 @@ ThreeCompIVbolus <- function(inputDataFrame, A1init = 0){
     inputDataFrame$k13 <- inputDataFrame$Q3/inputDataFrame$V1
     inputDataFrame$k31 <- inputDataFrame$Q3/inputDataFrame$V3
     #inputDataFrame$k30 <- 0
-
-    #Adding these into the input data for marginal speed gain
-    inputDataFrame$A1 <- 0
-    inputDataFrame$A2 <- 0
-    inputDataFrame$A3 <- 0
 
     #set initial values in the compartments
     inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
