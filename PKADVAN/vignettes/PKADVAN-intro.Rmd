@@ -50,9 +50,9 @@ Stochastic population pharmacokinetic model simulations using the PKADVAN functi
   - Simulations using the integrated R/C++ ADVAN-style analytical solutions were substantially faster (8‑34 times) than the equivalent R-coded functions (Table 2). The relative speed of the integrated R/C++ functions was greater with the more complex models and with more extensive sample time evaluations (Table 2). 
   
   
-#####Table 1: Pharmacokinetic models of the 'PKADVAN' library
+######Table 1: Pharmacokinetic models of the 'PKADVAN' library
   Category            | Pharmacokinetic model             |     PKADVAN function name
-------------------  | ---------------------               | -------------------------
+--------------------------  | ----------------------------               | -------------------------
 Basic PK models     | 1 comp IV bolus                     | `OneCompIVbolus`
 Basic PK models     | 2 comp IV bolus                     | `TwoCompIVbolus`
 Basic PK models     | 3 comp IV bolus                     | `ThreeCompIVbolus`
@@ -80,14 +80,28 @@ First-order formation metabolite models   | 1 comp first-order absorption-1 comp
 First-order formation metabolite models   | 2 comp first-order absorption-1 comp metabolite	| `TwoCompFirstOrderAbsOneCompMetab`
 First-order formation metabolite models   | 3 comp first-order absorption-1 comp metabolite	| `ThreeCompFirstOrderAbsOneCompMetab`
 
+######Table2: Comparison of computation time: R-functions versus the integrated R/C++ PKADVAN functions
+Pharmacokinetic model           | R-functions (seconds)^a^ | PKADVAN functions (seconds)^a^ | Relative speed
+-------------------------------    | ----------              | ----------------            |---------
+3 comp IV bolus                 | 20.37 &plusmn; 0.08     | 1.33 &plusmn; 0.02          | 15.32
+3 comp first-order absorption   | 26.70 &plusmn; 0.42     | 1.52 &plusmn; 0.01          | 17.57
+3 comp IV-infusion              | 61.42 &plusmn; 0.17     | 7.40 &plusmn; 0.11          | 8.29
+3 comp first-order absorption-extended^b^ |64.67 &plusmn; 0.17 | 1.90 &plusmn; 0.02        | 33.98
 
-![Table 2](figures/Table_compuationcomp_PKADVAN.png)  
-  
+^a^ Mean ± SD computation time required to process simulations for 1000 subjects based on three compartment intravenous bolus, infusion, and first-order absorption models. For each subject, two doses were simulated with the evaluations performed at 1 hour time intervals for 2 days.
+
+^b^ The same dosing regimen simulations extended for 5 days.
+
+<br><br>
+
+
 ![Figurexxx 2](figures/DV_R_NONMEM.png)
   
 
 ## Simulation Example
 The following example illustrates the use of **PKADVAN** package to simulate the concentartion-time profiles of 1,000 subjects based on two compartment-two transit first-order oral absorption model. Creatinine clearance was added as a time-changing covariate on central clearance to show the cabability of the package in handling time-changing covariates. Between subject variability was added on `CL`, `V2`, `Q`, `V3`, `KA`. Proportional and additive residual error model was added on the individual predictions.
+
+<br>
 
   ![Figure 3](figures/TwocompTwoTransit.png)
 
