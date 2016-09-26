@@ -52,7 +52,7 @@ Stochastic population pharmacokinetic model simulations using the PKADVAN functi
   
 #####Table 1: Pharmacokinetic models of the 'PKADVAN' library
   Category            | Pharmacokinetic model             |     PKADVAN function name
-------------------  | ---------------------               | -------------------------
+--------------------------  | ----------------------------               | -------------------------
 Basic PK models     | 1 comp IV bolus                     | `OneCompIVbolus`
 Basic PK models     | 2 comp IV bolus                     | `TwoCompIVbolus`
 Basic PK models     | 3 comp IV bolus                     | `ThreeCompIVbolus`
@@ -81,8 +81,18 @@ First-order formation metabolite models   | 2 comp first-order absorption-1 comp
 First-order formation metabolite models   | 3 comp first-order absorption-1 comp metabolite	| `ThreeCompFirstOrderAbsOneCompMetab`
 
 
-![Table 2](figures/Table_compuationcomp_PKADVAN.png)  
-  
+
+#####Table: Comparison of computation time: R-functions versus the integrated R/C++ PKADVAN functions
+Pharmacokinetic model           | R-functions (seconds)^a^ | PKADVAN functions (seconds)^a^ | Relative speed
+----------------------------    | ----------              | ----------------            |---------
+3 comp IV bolus                 | 20.37 &plusmn; 0.08     | 1.33 &plusmn; 0.02          | 15.32
+3 comp first-order absorption   | 26.70 &plusmn; 0.42     | 1.52 &plusmn; 0.01          | 17.57
+3 comp IV-infusion              | 61.42 &plusmn; 0.17     | 7.40 &plusmn; 0.11          | 8.29
+3 comp first-order absorption-extended^b^ |64.67 &plusmn; 0.17 | 1.90 &plusmn; 0.02        | 33.98
+
+
+
+
 ![Figurexxx 2](figures/DV_R_NONMEM.png)
   
 
