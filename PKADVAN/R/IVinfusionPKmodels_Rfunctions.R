@@ -256,7 +256,7 @@ ThreeCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #---------------------------------------------
 # This function is to process infusion doses
 #---------------------------------------------
-ProcessInfusionDoses <- function (inputDataFrame) {
+ProcessInfusionDoses4 <- function (inputDataFrame) {
 
   #Collect all infusion doses
   infrows <- subset(inputDataFrame, AMT!=0 & RATE!=0)
@@ -280,17 +280,16 @@ ProcessInfusionDoses <- function (inputDataFrame) {
     infrowslastnoDV$RATE <- 0
   } else infrowslastnoDV <- NULL
 
-  #Collect the new rows
-  infrows <- rbind(infrows,infrowslast,infrowslastnoDV)
-
-  #Rewrite previous dose rows with new dose rows
-  inputDataFrame <- rbind(inputDataFrame[inputDataFrame$AMT==0 & inputDataFrame$RATE==0,],infrows)
+  #Old rows without dose rows
+  oldrows <- inputDataFrame[inputDataFrame$AMT==0 & inputDataFrame$RATE==0,]
+  #Join the old rows & new rows
+  inputDataFrame <- do.call("rbind",list(oldrows,infrows,infrowslast,infrowslastnoDV))
   inputDataFrame <- inputDataFrame[order(inputDataFrame$ID,inputDataFrame$TIME,inputDataFrame$AMT),]
 
-  #Set an extra last row
-  lastrow <- tail(inputDataFrame, 1)
-  lastrow$TIME <- lastrow$TIME+1
-  inputDataFrame <- rbind(inputDataFrame,lastrow)
+  #Set an extra last row to allow calculation to end
+  rowcount <- nrow(inputDataFrame)
+  inputDataFrame <- inputDataFrame[c(1:rowcount,rowcount),]
+  inputDataFrame$TIME[rowcount+1] <- inputDataFrame$TIME[rowcount+1] + 1
 
   #Now fill in the gaps for the covariates by locf
   for (i in badcols)
