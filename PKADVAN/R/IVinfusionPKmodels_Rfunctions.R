@@ -258,69 +258,55 @@ ThreeCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #---------------------------------------------
 ProcessInfusionDoses <- function (inputDataFrame) {
 
-	#Setting variables to NULL first to avoid notes "no visible binding for global variable [variable name]" upon checking the package
-	AMT <- DNUM <- RATEALLI <- DNUMI <- NULL
+  #Collect all infusion doses
+  infrows <- subset(inputDataFrame, AMT!=0 & RATE!=0)
 
-	#Calculate all amounts
-	doserows <- subset(inputDataFrame, AMT!=0)
-	dosecount <- nrow(doserows)    #total number of doses
-	doserows$DNUM <- 1:dosecount
+  #Need to add times for ending the infusions - these may not be in the database
+  infrowslast <- infrows
+  infrowslast$TIME <- infrowslast$TIME+infrowslast$AMT/infrowslast$RATE
+  infrowslast$RATE <- infrowslast$RATE*-1     #end of infusion set at negative rate, which cancels in the cumulative sum of rates
 
-	#Need to add times for ending the infusions - these may not be in the database
-	doserowslast <- doserows
-	doserowslast$TIME <- doserowslast$TIME+doserowslast$AMT/doserowslast$RATE
-	doserowslast$DNUM <- doserowslast$DNUM*(-1)
+  goodcols <- c("ID","TIME","AMT","RATE")
+  badcols <- which(names(infrowslast)%in%goodcols==F)
+  infrowslast[,badcols] <- NA
 
-	goodcols <- c("ID","TIME","AMT","RATE","DNUM")
-	badcols <- which(names(doserowslast)%in%goodcols==F)
-	doserowslast[,badcols] <- NA
+  #Are there any doserows without a DV value?    These need to precede the infusion change
+  #Covariates (when present) would also need imputing
+  noDVindex <- which(infrowslast$TIME%in%inputDataFrame$TIME==F)
+  #print(noDVindex)
+  if (length(noDVindex) > 0){
+    infrowslastnoDV <- infrowslast[noDVindex,]
+    infrowslastnoDV$AMT <- 0
+    infrowslastnoDV$RATE <- 0
+  } else infrowslastnoDV <- NULL
 
-	#Are there any doserows without a DV value?    These need to precede the infusion change
-	noDVindex <- which(doserowslast$TIME%in%inputDataFrame$TIME==F)
-	doserowslastnoDV <- doserowslast[noDVindex,]
-	doserowslastnoDV$AMT <- 0
-	doserowslastnoDV$RATE <- 0
-	doserowslastnoDV$DNUM <- NA
+  #Collect the new rows
+  infrows <- rbind(infrows,infrowslast,infrowslastnoDV)
 
-	#Collect the new rows
-	doserows <- rbind(doserows,doserowslast,doserowslastnoDV)
+  #Rewrite previous dose rows with new dose rows
+  inputDataFrame <- rbind(inputDataFrame[inputDataFrame$AMT==0 & inputDataFrame$RATE==0,],infrows)
+  inputDataFrame <- inputDataFrame[order(inputDataFrame$ID,inputDataFrame$TIME,inputDataFrame$AMT),]
 
-	#Rewrite previous dose rows with new dose rows
-	inputDataFrame$DNUM <- NA
-	inputDataFrame <- rbind(inputDataFrame[inputDataFrame$AMT==0,],doserows)
-	inputDataFrame <- inputDataFrame[order(inputDataFrame$ID,inputDataFrame$TIME,inputDataFrame$AMT),]
+  #Set an extra last row
+  lastrow <- tail(inputDataFrame, 1)
+  lastrow$TIME <- lastrow$TIME+1
+  inputDataFrame <- rbind(inputDataFrame,lastrow)
 
-	#Set an extra last row
-	lastrow <- tail(inputDataFrame, 1)
-	lastrow$TIME <- lastrow$TIME+1
-	inputDataFrame <- rbind(inputDataFrame,lastrow)
+  #Now fill in the gaps for the covariates by locf
+  for (i in badcols)
+  {
+    inputDataFrame[,i] <- locf(inputDataFrame[,i])
+  }
 
-	#Now fill in the gaps for the covariates by locf
-	for (i in badcols)
-	{
-     inputDataFrame[,i] <- locf(inputDataFrame[,i])
-	}
+  #Calculate the cumulative rate
+  inputDataFrame$RATEALL <- cumsum(inputDataFrame$RATE)
 
-#-------------------------------------------------------------------------------------
-	#Process infusion doses in a loop
-	inputDataFrame$RATEALL <- 0
-	for (DCOUNT in 1:dosecount)
-	{
-		inputDataFrame$RATEALLI <- 0
-		inputDataFrame$DNUMI <- inputDataFrame$DNUM
-		inputDataFrame$DNUMI[abs(inputDataFrame$DNUM)!=DCOUNT] <- NA
-		inputDataFrame$DNUMI <- locf(inputDataFrame$DNUMI)
-		inputDataFrame$DNUMI[is.na(inputDataFrame$DNUMI)==T] <- 0
-		inputDataFrame$RATEALLI[inputDataFrame$DNUMI==DCOUNT] <- inputDataFrame$RATE[which(inputDataFrame$DNUM==DCOUNT)]
-		inputDataFrame$RATEALL <- inputDataFrame$RATEALL+inputDataFrame$RATEALLI
-	}
+  #Tidy up
+  inputDataFrame <- inputDataFrame[inputDataFrame$RATE >= 0, ]
+  inputDataFrame$RATEALL[inputDataFrame$AMT > 0] <- 0
 
-	#This is crucial
-	inputDataFrame$RATEALL[inputDataFrame$DNUM > 0] <- 0
-
-	#Get rid of extra dose rows
-	inputDataFrame <- subset(inputDataFrame, (DNUM > 0 | is.na(DNUM)==T))
-	inputDataFrame <- subset(inputDataFrame, select = -c(DNUM,RATEALLI,DNUMI))     # no longer needed
+  #Return
+  inputDataFrame
 }
 
 
