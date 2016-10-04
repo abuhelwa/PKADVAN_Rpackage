@@ -256,7 +256,9 @@ ThreeCompIVinfusion <- function(inputDataFrame, A1init = 0){
 #---------------------------------------------
 # This function is to process infusion doses
 #---------------------------------------------
-ProcessInfusionDoses4 <- function (inputDataFrame) {
+ProcessInfusionDoses <- function (inputDataFrame) {
+
+  AMT <- RATE <- NULL
 
   #Collect all infusion doses
   infrows <- subset(inputDataFrame, AMT!=0 & RATE!=0)
