@@ -85,7 +85,7 @@ Pharmacokinetic model           | R-functions (seconds)^a^ | PKADVAN functions (
 -------------------------------    | ----------              | ----------------            |---------
 3 comp IV bolus                 | 20.37 &plusmn; 0.08     | 1.33 &plusmn; 0.02          | 15.32
 3 comp first-order absorption   | 26.70 &plusmn; 0.42     | 1.52 &plusmn; 0.01          | 17.57
-3 comp IV-infusion              | 61.42 &plusmn; 0.17     | 7.40 &plusmn; 0.11          | 8.29
+3 comp IV-infusion              | 61.42 &plusmn; 0.17     | 5.04 &plusmn; 0.05          | 12.19
 3 comp first-order absorption-extended^b^ |64.67 &plusmn; 0.17 | 1.90 &plusmn; 0.02        | 33.98
 
 ^a^ Mean ± SD computation time required to process simulations for 1000 subjects based on three compartment intravenous bolus, infusion, and first-order absorption models. For each subject, two doses were simulated with the evaluations performed at 1 hour time intervals for 2 days.
