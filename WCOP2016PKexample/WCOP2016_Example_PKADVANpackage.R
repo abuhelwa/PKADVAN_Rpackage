@@ -155,9 +155,9 @@
 	plotobj <- plotobj + facet_wrap(~SOURCE)
 	plotobj
 
-###################################################################################################
-######## EXAMPLE 2:     One compartment IV bolus with 1 comp metabolite    ########################
-###################################################################################################
+##########################################################################
+######## EXAMPLE 2:     One compartment IV bolus  ########################
+##########################################################################
 #================================
 # Generate simulation data frame
 #================================
@@ -182,9 +182,9 @@
 	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==FALSE)      # remove the row that has a TIME=0 and AMT=0
 
-#--------------------------------------------------------------
-# 1 compartment-IV Bolus 1 comp metabolite via PKADVAN package
-#--------------------------------------------------------------
+#--------------------------------------------
+# 1 compartment-IV Bolus via PKADVAN package
+#--------------------------------------------
 #Define between subject variability (BSV)
 	#Use random number generator to simulate residuals from a normal distribution
 	BSVCL <- rnorm(nsub, mean = 0, sd = 0.15)  #BSV on CL
