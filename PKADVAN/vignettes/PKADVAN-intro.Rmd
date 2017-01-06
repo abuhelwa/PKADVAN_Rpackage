@@ -204,8 +204,6 @@ inputDataFrame <- df
 #This is crucial!
 	inputDataFrame <- inputDataFrame[order(inputDataFrame$ID,inputDataFrame$TIME,inputDataFrame$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
 	head(inputDataFrame)
-
-	head(inputDataFrame)
 ```
 ### Step 4: Apply PKADVAN function of the selected PK model
 To simulate a population (i.e. the `inputDataFrame` has more than one subject `ID`), the function has to be applied for each subject `ID`. One way of doing that is through using the `ddply` functionality in the **plyr** package in R. The `ddply` functionality allows applying the PKADVAN function to each subject ID and combines the results into a data frame.
