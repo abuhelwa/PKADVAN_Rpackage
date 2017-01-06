@@ -65,7 +65,6 @@
 
 	#Add back dose information
 	df <- rbind(df,doserows)
-	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #----------------------------------------------------------------------------------------------------
@@ -104,6 +103,7 @@
 
 #Modify df for ADVAN calculation and include any covariates on PK parameters
 	dfadvan <- df
+
 	#Calculate group parameter values including any covariate effects
 	dfadvan$CL  <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)   #creatinine clearance (CLCR) added as a time-changing covariate on CL
 	dfadvan$V2  <- V2pop*exp(BSVV2)
@@ -112,7 +112,10 @@
 	dfadvan$KTR <- KTRpop*exp(BSVKTR)
 	dfadvan$F1  <- F1pop
 
-	#Apply PKADVAN functions
+#Apply PKADVAN functions
+	#This is crucial
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	
 	simdf <- ddply(dfadvan, .(ID), TwoCompTwoTransit)
 	head(simdf)
 
@@ -179,7 +182,6 @@
 
 #Add back dose information
 	df <- rbind(df,doserows)
-	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==FALSE)      # remove the row that has a TIME=0 and AMT=0
 
 #--------------------------------------------
@@ -204,6 +206,8 @@
 	dfadvan$V  <- Vpop*exp(BSVV)
 
 #Apply PKADVAN function
+	#This is crucial
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
 	simdf <- ddply(dfadvan, .(ID), OneCompIVbolus)
 
 #Add residual unexplained variability (within subject variability)
@@ -258,7 +262,10 @@
 	dfadvan$V1 <- V1pop
 	dfadvan$Q  <- Qpop
 	dfadvan$V2 <- V2pop
-
+	
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	
 #apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), TwoCompIVbolus)
 	head(simdf)
@@ -285,7 +292,10 @@
 	dfadvan$V2  <- V2pop
 	dfadvan$Q3 <- Q13pop
 	dfadvan$V3  <- V3pop
-
+	
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	
 #Apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), ThreeCompIVbolus)
 	head(simdf)
@@ -323,7 +333,6 @@
 
 	#Add back dose information
 	df <- rbind(df,doserows)
-	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #---------------------------------------------------------------
@@ -351,6 +360,9 @@
 	dfadvan$KA <- KApop
 	dfadvan$F1 <- F1pop*exp(BSVF1)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
 #Apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), OneCompFirstOrderAbs)
 	head(simdf)
@@ -423,6 +435,10 @@
 	dfadvan$KA <- KApop
 	dfadvan$F1 <- F1pop*exp(BSVF1)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), TwoCompFirstOrderAbs)
 	head(simdf)
@@ -462,9 +478,6 @@
 	plotobj <- plotobj + scale_x_continuous("\nTime after dose")
 	plotobj
 
-	#?processing time
-	system.time(ddply(dfadvan, .(ID), TwoCompFirstOrderAbs))
-
 #---------------------------------------------------------------
 # 3 compartment-first order absorption via PKADVAN package
 #---------------------------------------------------------------
@@ -499,6 +512,10 @@
 	dfadvan$KA <- KApop
 	dfadvan$F1 <- F1pop*exp(BSVF1)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), ThreeCompFirstOrderAbs)
 	head(simdf)
@@ -569,7 +586,6 @@
 
 	#Add back dose information
 	df <- rbind(df,doserowssim)
-	df <- df[order(df$TIME,-df$AMT),]       # arrange df by TIME with the AMT from high to low
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #----------------------------------------------------
@@ -593,6 +609,10 @@
 	dfadvan$CL <- CLpop*exp(BSVCL)*(dfadvan$CLCR/100)      #creatinine clearance (CLCR) added as a covariate on CL
 	dfadvan$V  <- Vpop*exp(BSVV)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), OneCompIVinfusion)
 	head(simdf)
@@ -651,6 +671,10 @@
 	dfadvan$Q  <- Qpop
 	dfadvan$V2 <- V2pop
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #Apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), TwoCompIVinfusion)
 
@@ -677,6 +701,9 @@
 	dfadvan$Q3 <- Q13pop
 	dfadvan$V3  <- V3pop
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
 #Apply PKADVAN function
 	simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion)
 #system.time(simdf <- ddply(dfadvan, .(ID), ThreeCompIVinfusion))
@@ -711,7 +738,6 @@
 
 	#Add back dose information
 	df <- rbind(df,doserows)
-	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #----------------------------------------------------------------------------------------------------
@@ -757,6 +783,9 @@
 	dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
 	dfadvan$VM <- VpopMet*exp(BSVVM)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
 #Apply PKADVAN function to each ID in df
 	simdf <- ddply(dfadvan, .(ID), OneCompFirstOrderAbsOneCompMetab)
 	head(simdf)
@@ -850,6 +879,10 @@
 	dfadvan$CLM <- CLpopMet**exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
 	dfadvan$VM <- VpopMet
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #Apply PKADVAN function to each ID in df
 	simdf <- ddply(dfadvan, .(ID), TwoCompFirstOrderAbsOneCompMetab)
 	head(simdf)
@@ -939,6 +972,9 @@
 	dfadvan$CLM <- CLpopMet**exp(BSVCLM)*(dfadvan$CLCR/100) #creatinine clearance (CLCR) added as a covariate on CLM
 	dfadvan$VM <- VpopMet
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
 #Apply PKADVAN function to each ID in df
 	simdf <- ddply(dfadvan, .(ID), ThreeCompFirstOrderAbsOneCompMetab)
 	head(simdf)
@@ -1007,7 +1043,6 @@
 
 	#Add back dose information
 	df <- rbind(df,doserowssim)
-	df <- df[order(df$TIME,-df$AMT),]       # arrange df by TIME with the AMT from high to low
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 
 #---------------------------------------------------------------
@@ -1047,6 +1082,10 @@
 	dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100)
 	dfadvan$VM <- VpopMet*exp(BSVVM)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
+	
 #Apply the ADVAN function for each ID in df
 	simdf <- ddply(dfadvan, .(ID), OneCompIVinfusionOneCompMetab)
 	head(simdf)
@@ -1153,6 +1192,9 @@
 	dfadvan$CLM <- CLpopMet*exp(BSVCLM)*(dfadvan$CLCR/100)
 	dfadvan$VM <- VpopMet*exp(BSVVM)
 
+#This is crucial!
+	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(dfadvan)
 #Apply the ADVAN function for each ID in df
 	simdf <- ddply(dfadvan, .(ID), TwoCompIVinfusionOneCompMetab)
 	head(simdf)
