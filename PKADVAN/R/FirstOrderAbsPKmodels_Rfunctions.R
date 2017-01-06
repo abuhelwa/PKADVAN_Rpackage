@@ -84,7 +84,6 @@ OneCompFirstOrderAbs <- function(inputDataFrame){
 #' \code{F1}:\tab is the bioavailability\cr
 #' \code{KA}:\tab is the absorption rate contstant\cr
 #' \code{CL}:\tab is the central compartment clearance\cr
-#' \code{CL}:\tab is the central compartment clearance\cr
 #' \code{V2}:\tab is the central volume of distribution\cr
 #' \code{Q}:\tab    is the inter-compartmental clearance\cr
 #' \code{V3}:\tab is the peripheral volume of distribution\cr
