@@ -1195,6 +1195,7 @@
 #This is crucial!
 	dfadvan <- dfadvan[order(dfadvan$ID,dfadvan$TIME,dfadvan$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
 	head(dfadvan)
+	
 #Apply the ADVAN function for each ID in df
 	simdf <- ddply(dfadvan, .(ID), TwoCompIVinfusionOneCompMetab)
 	head(simdf)

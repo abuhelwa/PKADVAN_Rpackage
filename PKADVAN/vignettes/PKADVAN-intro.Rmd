@@ -150,7 +150,6 @@ rm(list=ls(all=TRUE))
 	
 	#Add back dose information
 	df <- rbind(df,doserows)
-	df <- df[order(df$ID,df$TIME,df$AMT),]       # arrange df by TIME (ascending) and by AMT (descending)
 	df <- subset(df, (TIME==0 & AMT==0)==F) # remove the row that has a TIME=0 and AMT=0
 	head(df)
 ```
@@ -202,6 +201,10 @@ inputDataFrame <- df
 	inputDataFrame$V3  <- V3pop*exp(BSVV3)
 	inputDataFrame$KTR <- KTRpop*exp(BSVKTR)
 	inputDataFrame$F1  <- F1pop
+#This is crucial!
+	inputDataFrame <- inputDataFrame[order(inputDataFrame$ID,inputDataFrame$TIME,inputDataFrame$AMT),] # Arrange df by TIME (ascending) and by AMT (descending)
+	head(inputDataFrame)
+
 	head(inputDataFrame)
 ```
 ### Step 4: Apply PKADVAN function of the selected PK model
