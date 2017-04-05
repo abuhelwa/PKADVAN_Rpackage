@@ -43,7 +43,7 @@
 #-------------------------------------------------------------------
 # 1 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
-OneCompIVbolus <- function(inputDataFrame){
+OneCompIVbolus <- function(inputDataFrame,  A1init=0){
     #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT, MDV, CL, V
     #Returns a dataframe with populated columns for A1, and IPRED
 
@@ -54,7 +54,7 @@ OneCompIVbolus <- function(inputDataFrame){
     inputDataFrame$k10 <- inputDataFrame$CL/inputDataFrame$V
 
     #Set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <-  inputDataFrame$AMT[inputDataFrame$TIME==0]
+    inputDataFrame$A1[inputDataFrame$TIME==0] <-  A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]
 
     #process calculations using the Cpp code
     OneCompIVbolusCpp( inputDataFrame )
@@ -117,7 +117,7 @@ OneCompIVbolus <- function(inputDataFrame){
 #-------------------------------------------------------------------
 # 2 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
-TwoCompIVbolus <- function(inputDataFrame){
+TwoCompIVbolus <- function(inputDataFrame, A1init = 0){
     #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT,MDV, CL, V1, Q, V2
     #Returns a dataframe with populated columns for A1, A2, and IPRED
 
@@ -131,7 +131,7 @@ TwoCompIVbolus <- function(inputDataFrame){
     #inputDataFrame$k20 <- 0
 
     #set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0    # drug amount in the peripheral compartment at time zero.
 
     TwoCompIVbolusCpp( inputDataFrame )
@@ -193,7 +193,7 @@ TwoCompIVbolus <- function(inputDataFrame){
 #-------------------------------------------------------------------
 # 3 compartment IV bolus via ADVAN-style equations: RCppfunctions
 #-------------------------------------------------------------------
-ThreeCompIVbolus <- function(inputDataFrame){
+ThreeCompIVbolus <- function(inputDataFrame, A1init = 0){
     #Accepts a NONMEM style data frame for 1 subject with columns for TIME, AMT,MDV,CL, V1, Q12, V2, Q13, V3
     #Returns a dataframe with populated columns for A1, A2, A3,and IPRED
 
@@ -210,7 +210,7 @@ ThreeCompIVbolus <- function(inputDataFrame){
     #inputDataFrame$k30 <- 0
 
     #set initial values in the compartments
-    inputDataFrame$A1[inputDataFrame$TIME==0] <- inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
+    inputDataFrame$A1[inputDataFrame$TIME==0] <- A1init + inputDataFrame$AMT[inputDataFrame$TIME==0]    # drug amount in the central compartment at time zero.
     inputDataFrame$A2[inputDataFrame$TIME==0] <- 0     # drug amount in the 1st-peripheral compartment at time zero.
     inputDataFrame$A3[inputDataFrame$TIME==0] <- 0     # drug amount in the 2nd-peripheral compartment at time zero.
 
