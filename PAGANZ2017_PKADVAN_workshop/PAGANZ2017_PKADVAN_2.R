@@ -1,4 +1,6 @@
 # R script for simulating a population and concentrations using the PKADVAN package
+    #To run the simulation examples below, you need to:
+        #(1) Download and install the PKADVAN package from GitHub ( https://github.com/abuhelwa/Download_PKADVAN_package_latest_version )
         #(2) intall ggplot2, MASS, MBESS, Rcpp and plyr packages.
 
 ## --------------------------------------------------------------------------------
